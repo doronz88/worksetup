@@ -94,6 +94,7 @@ def install_brew_packages():
         'PyCharm CE.app': 'pycharm-ce',
         'Visual Studio Code.app': 'visual-studio-code',
         'Rectangle.app': 'rectangle',
+        'Discord.app': 'discord',
     }
 
     for app, cask in casks.items():
