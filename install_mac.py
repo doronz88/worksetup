@@ -76,7 +76,7 @@ def install_brew_packages():
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
                 'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
-                'dockutil']
+                'dockutil', 'jq']
 
     for p in packages:
         if p not in brew_list.split('\n'):
