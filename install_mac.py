@@ -98,7 +98,7 @@ def install_brew_packages():
     }
 
     for app, cask in casks.items():
-        if f'\n{cask}\n' in brew_list:
+        if cask in brew_list.split('\n'):
             # skip already installed through brew
             continue
 
