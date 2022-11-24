@@ -35,6 +35,7 @@ Setup script for quickly setting up macOS installations for a more efficient wor
 - Wireshark
 - Rectangle
 - Discord
+- Flycut
 
 </details>
 

@@ -95,6 +95,7 @@ def install_brew_packages():
         'Visual Studio Code.app': 'visual-studio-code',
         'Rectangle.app': 'rectangle',
         'Discord.app': 'discord',
+        'Flycut.app': 'flycut',
     }
 
     for app, cask in casks.items():
