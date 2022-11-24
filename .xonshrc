@@ -158,7 +158,7 @@ def _rcpull(args):
 
     cd ~/dev/worksetup
     ggpull
-    cp ~/.xonshrc ~/
+    cp .xonshrc ~/
     cd -
 
 
