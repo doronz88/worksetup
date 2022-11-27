@@ -41,6 +41,10 @@ Setup script for quickly setting up macOS installations for a more efficient wor
 
 # Perquisites
 
+Install latest XCode:
+
+https://apps.apple.com/us/app/xcode/id497799835?mt=12
+
 Install Homebrew:
 
 ```shell
