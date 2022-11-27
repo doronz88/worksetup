@@ -57,6 +57,12 @@ Install `python3.11` & `git`:
 brew install python@3.11 git
 ```
 
+Make sure to have an SSH keypair:
+
+```shell
+ssh-keygen
+```
+
 Prepare setup:
 
 ```shell
