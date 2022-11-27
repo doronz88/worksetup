@@ -2,6 +2,7 @@ import logging
 import os
 import platform
 import shutil
+import sys
 from pathlib import Path
 
 import click
@@ -12,16 +13,10 @@ from plumbum import local, ProcessExecutionError
 coloredlogs.install(level=logging.DEBUG)
 
 IS_ARM64 = platform.uname().machine == 'arm64'
-PYTHON3_BINARY_PATH = '/opt/homebrew/bin/python3' if IS_ARM64 else '/usr/local/bin/python3'
 DEV_PATH = Path('~/dev').expanduser()
 
-BLACKLISTED_DOCK_APPS = ('Safari', 'Messages', 'Mail', 'Maps', 'Photos', 'FaceTime', 'Calendar', 'Contacts',
-                         'Reminders', 'Notes', 'TV', 'Music', 'Podcasts', 'News', 'Keynote', 'Numbers', 'Pages')
-
-WHITELISTED_DOCK_APPS = ('/Applications/iTerm.app', '/Applications/Google Chrome.app')
-
 brew = local['brew']
-python3 = local[PYTHON3_BINARY_PATH]
+python3 = local[sys.executable]
 sudo = local['sudo']
 defaults = local['defaults']
 killall = local['killall']
