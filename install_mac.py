@@ -12,7 +12,6 @@ from plumbum import local, ProcessExecutionError
 
 coloredlogs.install(level=logging.DEBUG)
 
-IS_ARM64 = platform.uname().machine == 'arm64'
 DEV_PATH = Path('~/dev').expanduser()
 
 brew = local['brew']
