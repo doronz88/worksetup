@@ -107,7 +107,7 @@ def install_brew_packages():
                 if 'is not installed' not in e.stderr:
                     raise
 
-            brew('reinstall', '--cask', cask, '--force')
+            brew('install', '--cask', cask, '--force')
 
     logger.info('installing blacktop\'s ipsw')
     brew('install', 'blacktop/tap/ipsw')
