@@ -4,6 +4,7 @@ import platform
 import shutil
 import sys
 from pathlib import Path
+from typing import List
 
 import click
 import coloredlogs
@@ -63,7 +64,7 @@ def configure_preferences():
     killall('Finder')
 
 
-def install_brew_packages():
+def install_brew_packages(disable: List[str]):
     logger.info('installing brew packages')
 
     brew_list = brew('list')
@@ -72,9 +73,14 @@ def install_brew_packages():
                 'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
                 'jq']
 
+    for p in disable:
+        if p in packages:
+            logger.info(f'skipping {p}')
+            packages.remove(p)
+
     for p in packages:
         if p not in brew_list.split('\n'):
-            brew('reinstall', p, '--force')
+            brew('install', p, '--force')
 
     git('lfs', 'install')
     sudo('git', 'lfs', 'install', '--system')
@@ -93,6 +99,10 @@ def install_brew_packages():
     }
 
     for app, cask in casks.items():
+        if cask in disable:
+            logger.info(f'skipping {cask}')
+            continue
+
         if cask in brew_list.split('\n'):
             # skip already installed through brew
             continue
@@ -155,8 +165,9 @@ def cli_configure_preferences():
 
 
 @cli.command('brew-packages')
-def cli_brew_packages():
-    install_brew_packages()
+@click.option('-d', '--disable', multiple=True)
+def cli_brew_packages(disable):
+    install_brew_packages(disable)
 
 
 @cli.command('python-packages')
@@ -171,9 +182,10 @@ def cli_xonsh():
 
 
 @cli.command('everything')
-def cli_everything():
+@click.option('-d', '--disable', multiple=True)
+def cli_everything(disable):
     configure_preferences()
-    install_brew_packages()
+    install_brew_packages(disable)
     install_python_packages()
     install_xonsh()
 
