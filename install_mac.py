@@ -131,9 +131,9 @@ def install_python_packages():
 
     python3('-m', 'pip', 'install', '-U', 'pip')
 
-    python3('-m', 'pip', 'install', '-U', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython',
-            'plumbum', 'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'pymobiledevice3',
-            'harlogger', 'cfprefsmon', 'pychangelog2')
+    python3('-m', 'pip', 'install', '-U', 'xattr', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments',
+            'ipython', 'plumbum', 'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up',
+            'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2')
 
 
 def install_xonsh():
