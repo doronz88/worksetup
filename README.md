@@ -76,5 +76,5 @@ python3.11 -m pip install -r requirements.txt
 # Usage
 
 ```shell
-python3.11 -m install_mac.py everything
+python3.11 install_mac.py everything
 ```
