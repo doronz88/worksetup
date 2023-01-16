@@ -5,10 +5,15 @@
 
 import os
 import shlex
+import json
 import tempfile
+import plistlib
+from datetime import datetime
+from uuid import UUID
 from argparse import ArgumentParser
 from typing import List
 
+from pygments import highlight, formatters, lexers
 from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
 
@@ -54,6 +59,24 @@ XSH.env['fzf_history_binding'] = "c-r"  # Ctrl+R
 XSH.env['fzf_ssh_binding'] = "c-s"      # Ctrl+S
 XSH.env['fzf_file_binding'] = "c-t"      # Ctrl+T
 XSH.env['fzf_dir_binding'] = "c-g"      # Ctrl+G
+
+
+def _default_json_encoder(obj):
+    if isinstance(obj, bytes):
+        return obj.hex()
+    if isinstance(obj, datetime):
+        return str(obj)
+    if isinstance(obj, UUID):
+        return str(obj)
+    raise TypeError()
+
+
+def _pretty_json(buf, colored=True, default=_default_json_encoder):
+    formatted_json = json.dumps(buf, sort_keys=True, indent=4, default=default)
+    if colored:
+        return highlight(formatted_json, lexers.JsonLexer(), formatters.TerminalTrueColorFormatter(style='stata-dark'))
+    else:
+        return formatted_json
 
 
 # -- STYLE
@@ -227,6 +250,18 @@ def _cert(cn: str, key: str, cer: str, csr: str, root_key: str, root_cer: str, i
             XSH.builtins.execx(cmd)
 
 
+def _plshow(filename: str, uncolored=False):
+    """
+    display a plist file
+
+    Parameters
+    ----------
+    uncolored : -u, --uncolored
+        remove colors
+    """
+    with open(filename, 'rb') as f:
+        return _pretty_json(plistlib.load(f), colored=(not uncolored))
+
 
 # -- xonsh
 
@@ -276,6 +311,7 @@ aliases['pymobiledevice3'] = 'python3 -m pymobiledevice3'
 aliases['rpcclient'] = 'python3 -m rpcclient'
 aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
 aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
+aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 
 
 
