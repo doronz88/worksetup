@@ -34,7 +34,8 @@ XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-widgets jedi vox up
 # XSH.env['DEVICE_SSH_PORT'] = 2222
 XSH.env['DEVICE_SSH_PORT'] = 4444
 XSH.env['PROMPT'] = '{env_name}{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch: {}}{RESET} {BOLD_BLUE}{prompt_end}{RESET} '
-XSH.env['PATH'] = ['/usr/local/opt/openjdk/bin',
+XSH.env['PATH'] = ['/usr/local/opt/make/libexec/gnubin',
+ '/usr/local/opt/openjdk/bin',
  '/usr/local/opt/openssl@1.1/bin',
  '/Library/Frameworks/Python.framework/Versions/3.10/bin',
  '/opt/homebrew/bin',
