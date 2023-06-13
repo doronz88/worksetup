@@ -6,6 +6,7 @@
 import os
 import shlex
 import json
+import time
 import tempfile
 import plistlib
 from datetime import datetime
@@ -16,6 +17,8 @@ from typing import List
 from pygments import highlight, formatters, lexers
 from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
+from plumbum import local
+from plumbum.commands.processes import ProcessExecutionError
 
 from xonsh.built_ins import XSH
 from xonsh.pyghooks import register_custom_pygments_style
@@ -268,6 +271,18 @@ def _plshow(filename: str, uncolored=False):
         return _pretty_json(plistlib.load(f), colored=(not uncolored))
 
 
+def _disable_watchdog():
+    """
+    Effectively macOS watchdogd
+    """
+    while True:
+        try:
+            local['sudo']('pkill', '-9', 'watchdogd')
+        except ProcessExecutionError:
+            pass
+        time.sleep(5)
+
+
 # -- xonsh
 
 aliases['reload'] = 'source ~/.xonshrc'
@@ -316,6 +331,7 @@ aliases['rpcclient'] = 'python3 -m rpcclient'
 aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
 aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
+aliases['disable_watchdog'] = _disable_watchdog
 
 
 
