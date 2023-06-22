@@ -17,7 +17,7 @@ from typing import List
 from pygments import highlight, formatters, lexers
 from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
-from plumbum import local
+from plumbum import local, FG
 from plumbum.commands.processes import ProcessExecutionError
 
 from xonsh.built_ins import XSH
@@ -271,6 +271,23 @@ def _plshow(filename: str, uncolored=False):
         return _pretty_json(plistlib.load(f), colored=(not uncolored))
 
 
+def _tarsplit(dirname: str):
+    """
+    archives given directory and splits into out
+
+    """
+    dirname = Path(dirname)
+
+    if not dirname.is_dir():
+        print(f'{dirname} is not a directory')
+        return 1
+
+    tarfile = f'{dirname}.tar'
+
+    local['tar']['-cvf', tarfile, dirname] & FG
+    local['split', '-b', '3G', tarfile, prefix] & FG
+
+
 def _disable_watchdog():
     """
     Effectively macOS watchdogd
@@ -331,6 +348,7 @@ aliases['rpcclient'] = 'python3 -m rpcclient'
 aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
 aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
+aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
 
 
