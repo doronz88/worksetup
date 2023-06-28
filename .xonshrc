@@ -58,7 +58,8 @@ XSH.env['PATH'] = [
  '~/Library/Python/3.8/bin',
  '~/Library/Python/3.10/bin']
 XSH.env['PKG_CONFIG_PATH'] = '/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/curl/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/readline/lib/pkgconfig'
-XSH.env['LDFLAGS'] = '-L/usr/local/opt/openssl@1.1/lib'
+XSH.env['LDFLAGS'] = '-L/usr/local/opt/openssl@1.1/lib -L/usr/local/opt/openssl/lib -L/opt/homebrew/opt/openssl/lib'
+XSH.env['CFLAGS'] = '-I/usr/local/opt/openssl/include -I/opt/homebrew/opt/openssl/include'
 XSH.env['CPPFLAGS'] = "-I/usr/local/opt/openssl@1.1/include"
 XSH.env['LSCOLORS'] = 'Gxfxcxdxbxegedabagacad'
 
