@@ -72,7 +72,7 @@ XSH.env['fzf_dir_binding'] = "c-g"      # Ctrl+G
 
 def _default_json_encoder(obj):
     if isinstance(obj, bytes):
-        return obj.hex()
+        return '<' + obj.hex() + '>'
     if isinstance(obj, datetime):
         return str(obj)
     if isinstance(obj, UUID):
