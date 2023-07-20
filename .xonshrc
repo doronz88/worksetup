@@ -242,7 +242,7 @@ def _cert(cn: str, key: str, cer: str, csr: str, root_key: str, root_cer: str, i
     with tempfile.NamedTemporaryFile('w+t') as f:
             lines = ['authorityKeyIdentifier=keyid,issuer\n',
                 'basicConstraints=CA:FALSE\n',
-                'keyUage = digitalSignature, noRepudiation, keyEncipherment, dataEncipherment\n',
+                'keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\n',
                 'subjectAltName = @alt_names\n',
                 '\n',
                 '[alt_names]\n']
