@@ -2,3 +2,4 @@ coloredlogs
 click
 plumbum
 inquirer
+jedi
