@@ -1,15 +1,14 @@
+import click
+import coloredlogs
+import inquirer
 import logging
 import os
 import platform
 import shutil
 import sys
 from pathlib import Path
-from typing import List
-
-import click
-import coloredlogs
-import inquirer
 from plumbum import local, ProcessExecutionError
+from typing import List
 
 coloredlogs.install(level=logging.DEBUG)
 
@@ -50,6 +49,10 @@ def configure_preferences():
 
     # enable execution from everywhere without the annoying "open anyway" from preferences
     sudo('spctl', '--master-disable')
+
+    # Disable Library Validation
+    sudo('defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
+         'DisableLibraryValidation', '-bool', 'true')
 
     # -- Finder
     defaults('write', 'NSGlobalDomain', 'AppleShowAllExtensions', '-bool', 'true')
