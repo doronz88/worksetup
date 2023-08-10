@@ -1,14 +1,14 @@
-import click
-import coloredlogs
-import inquirer
 import logging
 import os
-import platform
 import shutil
 import sys
 from pathlib import Path
-from plumbum import local, ProcessExecutionError
 from typing import List
+
+import click
+import coloredlogs
+import inquirer
+from plumbum import local, ProcessExecutionError
 
 coloredlogs.install(level=logging.DEBUG)
 
@@ -99,6 +99,8 @@ def install_brew_packages(disable: List[str]):
         'Rectangle.app': 'rectangle',
         'Discord.app': 'discord',
         'Flycut.app': 'flycut',
+        'Raycast.app': 'raycast',
+        'AltTab.app': 'alt-tab',
     }
 
     for app, cask in casks.items():

@@ -36,6 +36,8 @@ Setup script for quickly setting up macOS installations for a more efficient wor
 - Rectangle
 - Discord
 - Flycut
+- RayCast
+- Alt-Tab
 
 </details>
 
