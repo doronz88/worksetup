@@ -14,6 +14,7 @@ from uuid import UUID
 from argparse import ArgumentParser
 from typing import List
 
+from pathlib import Path
 from pygments import highlight, formatters, lexers
 from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
@@ -26,12 +27,12 @@ from xonsh.ansi_colors import register_custom_ansi_style
 from xonsh.cli_utils import ArgParserAlias, Arg, Annotated
 
 # -- XONTRIB
-
 if XSH.env.get('FORMATTER_DICT') is None:
     XSH.env['FORMATTER_DICT'] = {}
 
 XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-widgets jedi vox up')
 
+CUSTOM_RC = Path('~/.myrc').expanduser()
 # -- ENV
 
 # XSH.env['DEVICE_SSH_PORT'] = 2222
@@ -306,7 +307,8 @@ def _disable_watchdog():
 # -- xonsh
 
 aliases['reload'] = 'source ~/.xonshrc'
-aliases['rc'] = 'code ~/.xonshrc'
+aliases['globalrc'] = 'code ~/.xonshrc'
+aliases['localrc'] = f'code ~/{CUSTOM_RC}'
 aliases['rcpull'] = _rcpull
 aliases['rcpush'] = _rcpush
 
@@ -336,7 +338,7 @@ aliases['gst'] = 'git status'
 aliases['gcl'] = 'git clone --recurse-submodules'
 
 # -- shell
-
+aliases['t'] = 'tree'
 aliases['l'] = 'ls -lah'
 aliases['la'] = 'ls -lAh'
 aliases['ll'] = 'ls -lh'
@@ -356,3 +358,5 @@ aliases['disable_watchdog'] = _disable_watchdog
 
 
 
+if CUSTOM_RC.exists():
+    XSH.builtins.execx(f'source {CUSTOM_RC}')
