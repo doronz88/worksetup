@@ -356,9 +356,6 @@ aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
 
-bash_completions_m1_path = '/opt/homebrew/etc/bash_completion'
-if bash_completions_m1_path not in XSH.env['BASH_COMPLETIONS']:
-    XSH.env['BASH_COMPLETIONS'].append(bash_completions_m1_path)
 
 if CUSTOM_RC.exists():
     XSH.builtins.execx(f'source {CUSTOM_RC}')
