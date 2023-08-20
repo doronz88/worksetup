@@ -43,20 +43,16 @@ Setup script for quickly setting up macOS installations for a more efficient wor
 
 # Perquisites
 
-Install latest XCode:
-
-https://apps.apple.com/us/app/xcode/id497799835?mt=12
-
 Install Homebrew:
 
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Install `python3.11` & `git`:
+Install `python3.11`:
 
 ```shell
-brew install python@3.11 git
+brew install python@3.11
 ```
 
 Make sure to have an SSH keypair:
