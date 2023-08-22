@@ -7,7 +7,7 @@ from typing import List
 
 import click
 import coloredlogs
-import inquirer
+import inquirer3
 from plumbum import local, ProcessExecutionError
 
 coloredlogs.install(level=logging.DEBUG)
@@ -112,7 +112,7 @@ def install_brew_packages(disable: List[str]):
             # skip already installed through brew
             continue
 
-        if not (Path('/Applications') / app).exists() or inquirer.confirm(
+        if not (Path('/Applications') / app).exists() or inquirer3.confirm(
                 f'{app} is already installed. would you like to install latest from brew instead?', default=False):
             logger.info(f'installing {app}')
 
