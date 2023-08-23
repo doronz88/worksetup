@@ -252,7 +252,7 @@ def _cert(cn: str, key: str, cer: str, csr: str, root_key: str, root_cer: str, i
                     lines += f'IP.1 = {ip_}\n'
             if dns is not None:
                 for dns_ in dns:
-                    lines += f'DNS.1 = {dns}\n'
+                    lines += f'DNS.1 = {dns_}\n'
             f.writelines(lines)
             f.flush()
             cmd = f'openssl x509 -req -in {csr} -CA {root_cer} -CAkey {root_key} -CAcreateserial -out {cer} -days 825 -sha256'
