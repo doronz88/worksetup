@@ -2,13 +2,15 @@ import logging
 import os
 import shutil
 import sys
+from functools import partial
 from pathlib import Path
-from typing import List
+from typing import List, Callable
 
 import click
 import coloredlogs
-import inquirer
+import inquirer3
 from plumbum import local, ProcessExecutionError
+from plumbum.commands.base import BoundCommand
 
 coloredlogs.install(level=logging.DEBUG)
 
@@ -24,6 +26,17 @@ cp = local['cp']
 chsh = local['chsh']
 
 logger = logging.getLogger(__name__)
+
+AUTOMATION_MODE = False
+
+
+def confirm_install(component: str, installer: Callable) -> bool:
+    if AUTOMATION_MODE or inquirer3.confirm(f'To {component}?', default=False, show_default=True):
+        installer()
+
+
+def insert_number_install(message: str, installer: BoundCommand, default_number: int):
+    installer[default_number if AUTOMATION_MODE else inquirer3.text(message, default=default_number)]()
 
 
 def git_clone(repo_url: str, branch='master'):
@@ -47,22 +60,30 @@ def git_clone(repo_url: str, branch='master'):
 def configure_preferences():
     logger.info('configuring preferences')
 
-    # enable execution from everywhere without the annoying "open anyway" from preferences
-    sudo('spctl', '--master-disable')
+    confirm_install(
+        'disable master system policy (this would enable execution from everywhere without "open anyway" prompt',
+        sudo['spctl', '--master-disable'])
 
-    # Disable Library Validation
-    sudo('defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
-         'DisableLibraryValidation', '-bool', 'true')
+    confirm_install('disable Library Validation',
+                    sudo['defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
+                    'DisableLibraryValidation', '-bool', 'true'])
 
     # -- Finder
-    defaults('write', 'NSGlobalDomain', 'AppleShowAllExtensions', '-bool', 'true')
-    defaults('write', 'com.apple.finder', 'ShowPathbar', '-bool', 'true')
-    defaults('write', 'com.apple.finder', 'FXPreferredViewStyle', '-string', '-Nlsv')
+    confirm_install('show every file extension',
+                    defaults['write', 'NSGlobalDomain', 'AppleShowAllExtensions', '-bool', 'true'])
+    confirm_install('show path bar on finder', defaults['write', 'com.apple.finder', 'ShowPathbar', '-bool', 'true'])
+    confirm_install('set finder to details view',
+                    defaults['write', 'com.apple.finder', 'FXPreferredViewStyle', '-string', '-Nlsv'])
 
     # -- Keyboard (applied only after logout and login)
-    defaults('write', '-g', 'InitialKeyRepeat', '-int', '12')  # normal minimum is 15 (225 ms)
-    defaults('write', '-g', 'KeyRepeat', '-int', '2')  # normal minimum is 2 (30 ms)
-    defaults('write', '-g', 'ApplePressAndHoldEnabled', '-bool', 'false')  # normal minimum is 15 (225 ms)
+    confirm_install('change delay until key repeat',
+                    partial(insert_number_install, 'How much delay? mac normal is between 15 (225ms) to 120 (1.8s)',
+                            defaults['write', '-g', 'InitialKeyRepeat', '-int'], 12))
+    confirm_install('change key repeat rate',
+                    partial(insert_number_install, 'How much delay? mac normal is between 2 (30ms) to 120 (1.8s)',
+                            defaults['write', '-g', 'KeyRepeat', '-int'], 2))
+    confirm_install('disable accent menu when holding key',
+                    defaults['write', '-g', 'ApplePressAndHoldEnabled', '-bool', 'false'])
 
     killall('Finder')
 
@@ -112,7 +133,7 @@ def install_brew_packages(disable: List[str]):
             # skip already installed through brew
             continue
 
-        if not (Path('/Applications') / app).exists() or inquirer.confirm(
+        if not (Path('/Applications') / app).exists() or inquirer3.confirm(
                 f'{app} is already installed. would you like to install latest from brew instead?', default=False):
             logger.info(f'installing {app}')
 
@@ -165,7 +186,11 @@ def cli():
 
 
 @cli.command('configure-preferences')
-def cli_configure_preferences():
+@click.option('-a', '--automated', is_flag=True, help='do everything without prompting')
+def cli_configure_preferences(automated):
+    if automated:
+        global AUTOMATION_MODE
+        AUTOMATION_MODE = True
     configure_preferences()
 
 
