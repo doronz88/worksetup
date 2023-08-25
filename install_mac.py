@@ -91,7 +91,7 @@ def configure_preferences():
 def install_brew_packages(disable: List[str]):
     logger.info('installing brew packages')
 
-    brew_list = brew('list')
+    brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
                 'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
@@ -103,11 +103,16 @@ def install_brew_packages(disable: List[str]):
             packages.remove(p)
 
     for p in packages:
-        if p not in brew_list.split('\n'):
+        if p in disable:
+            logger.info(f'skipping {p}')
+            continue
+
+        if p not in brew_list:
             brew('install', p, '--force')
 
-    git('lfs', 'install')
-    sudo('git', 'lfs', 'install', '--system')
+    if 'git-lfs' not in brew_list and 'git-lfs' in brew('list').split('\n'):
+        git('lfs', 'install')
+        sudo('git', 'lfs', 'install', '--system')
 
     casks = {
         'iTerm.app': 'iterm2',
@@ -129,7 +134,7 @@ def install_brew_packages(disable: List[str]):
             logger.info(f'skipping {cask}')
             continue
 
-        if cask in brew_list.split('\n'):
+        if cask in brew_list:
             # skip already installed through brew
             continue
 
