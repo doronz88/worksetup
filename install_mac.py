@@ -108,7 +108,7 @@ def install_brew_packages(disable: List[str]):
             continue
 
         if p not in brew_list:
-            brew('install', p, '--force')
+            confirm_install(f'install {p}', brew['install', p, '--force'])
 
     if 'git-lfs' not in brew_list and 'git-lfs' in brew('list').split('\n'):
         git('lfs', 'install')
@@ -138,10 +138,12 @@ def install_brew_packages(disable: List[str]):
             # skip already installed through brew
             continue
 
-        if not (Path('/Applications') / app).exists() or inquirer3.confirm(
-                f'{app} is already installed. would you like to install latest from brew instead?', default=False):
-            logger.info(f'installing {app}')
-
+        if not (Path('/Applications') / app).exists():
+            confirm_install(f'install {cask}', brew['install', '--cask', cask, '--force'])
+        # Specific confirmation that included in automation mode
+        elif inquirer3.confirm(
+                f'{app} is already installed, but not through brew. would you like to install from brew instead?',
+                default=False):
             try:
                 brew('uninstall', cask)
             except ProcessExecutionError as e:
@@ -150,11 +152,12 @@ def install_brew_packages(disable: List[str]):
 
             brew('install', '--cask', cask, '--force')
 
-    logger.info('installing blacktop\'s ipsw')
-    brew('install', 'blacktop/tap/ipsw')
+    confirm_install('install ipsw', brew['install', 'blacktop/tap/ipsw'])
 
-    logger.info('setting default browser to google chrome')
-    local['defaultbrowser']('chrome')
+    if 'google-chrome' not in brew_list and 'defaultbrowser' in brew_list:
+        brew_list = brew('list').split('\n')
+        if 'google-chrome' in brew_list:
+            confirm_install('set google chrome to be your default browser', local['defaultbrowser']['chrome'])
 
 
 def install_python_packages():
@@ -185,21 +188,31 @@ def install_xonsh():
     chsh('-s', xonsh_path)
 
 
+def set_automation(ctx, param, value):
+    if value:
+        global AUTOMATION_MODE
+        AUTOMATION_MODE = True
+
+
+class BaseCommand(click.Command):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.params[:0] = [
+            click.Option(('-a', '--automated'), is_flag=True, callback=set_automation, expose_value=False,
+                         help='do everything without prompting (unless certain remvals are required)')]
+
+
 @click.group()
 def cli():
     pass
 
 
-@cli.command('configure-preferences')
-@click.option('-a', '--automated', is_flag=True, help='do everything without prompting')
-def cli_configure_preferences(automated):
-    if automated:
-        global AUTOMATION_MODE
-        AUTOMATION_MODE = True
+@cli.command('configure-preferences', cls=BaseCommand)
+def cli_configure_preferences():
     configure_preferences()
 
 
-@cli.command('brew-packages')
+@cli.command('brew-packages', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
 def cli_brew_packages(disable):
     install_brew_packages(disable)
@@ -216,7 +229,7 @@ def cli_xonsh():
     install_xonsh()
 
 
-@cli.command('everything')
+@cli.command('everything', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
 def cli_everything(disable):
     configure_preferences()
