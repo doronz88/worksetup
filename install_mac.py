@@ -165,9 +165,8 @@ def install_python_packages():
 
     confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
 
-    python_packages = ['xattr', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython', 'plumbum',
-                       'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox',
-                       'xontrib-jedi', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
+    python_packages = ['xattr', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython', 'plumbum',
+                       'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
     for package in python_packages:
         confirm_install(f'install {package}', python3['-m', 'pip', 'install', '-U', package])
@@ -176,19 +175,30 @@ def install_python_packages():
 def install_xonsh():
     logger.info('installing xonsh')
 
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
+
+    python3('-m', 'pip', 'install', '-U', 'xonsh')
+
+    confirm_install(f'install xonsh attributes', python3['-m', 'pip', 'install', '-U', 'xontrib-argcomplete',
+                    'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi'])
+
     xonsh_path = shutil.which('xonsh')
     if xonsh_path not in open('/etc/shells', 'r').read():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
-    brew('reinstall', 'fzf')
-    brew('reinstall', 'bash-completion')
+    confirm_install('install/reinstall fzf', brew['reinstall', 'fzf'])
+    confirm_install('install/reinstall bash-completion', brew['reinstall', 'bash-completion'])
 
-    DEV_PATH.mkdir(parents=True, exist_ok=True)
+    confirm_install('set xonsh to be the default shell', chsh['-s', xonsh_path])
 
-    os.chdir(DEV_PATH)
-    git_clone('git@github.com:doronz88/worksetup.git', 'main')
-    cp('worksetup/.xonshrc', Path('~/').expanduser())
-    chsh('-s', xonsh_path)
+    def set_xonshrc():
+        DEV_PATH.mkdir(parents=True, exist_ok=True)
+
+        os.chdir(DEV_PATH)
+        git_clone('git@github.com:doronz88/worksetup.git', 'main')
+        cp('worksetup/.xonshrc', Path('~/').expanduser())
+
+    confirm_install('set ready-made .xonshrc file', set_xonshrc)
 
 
 def set_automation(ctx, param, value):
@@ -226,9 +236,8 @@ def cli_python_packages():
     install_python_packages()
 
 
-@cli.command('xonsh')
+@cli.command('xonsh', cls=BaseCommand)
 def cli_xonsh():
-    install_python_packages()
     install_xonsh()
 
 
