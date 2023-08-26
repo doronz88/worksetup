@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 AUTOMATION_MODE = False
 
 
-def confirm_install(component: str, installer: Callable) -> bool:
+def confirm_install(component: str, installer: Callable):
     if AUTOMATION_MODE or inquirer3.confirm(f'To {component}?', default=False, show_default=True):
         installer()
 
