@@ -163,11 +163,14 @@ def install_brew_packages(disable: List[str]):
 def install_python_packages():
     logger.info('installing python packages')
 
-    python3('-m', 'pip', 'install', '-U', 'pip')
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
 
-    python3('-m', 'pip', 'install', '-U', 'xattr', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments',
-            'ipython', 'plumbum', 'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up',
-            'xontrib-vox', 'xontrib-jedi', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2')
+    python_packages = ['xattr', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython', 'plumbum',
+                       'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox',
+                       'xontrib-jedi', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
+
+    for package in python_packages:
+        confirm_install(f'install {package}', python3['-m', 'pip', 'install', '-U', package])
 
 
 def install_xonsh():
@@ -218,7 +221,7 @@ def cli_brew_packages(disable):
     install_brew_packages(disable)
 
 
-@cli.command('python-packages')
+@cli.command('python-packages', cls=BaseCommand)
 def cli_python_packages():
     install_python_packages()
 
