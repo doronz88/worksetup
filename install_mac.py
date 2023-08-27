@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 AUTOMATION_MODE = False
 
 
-def confirm_install(component: str, installer: Callable) -> bool:
+def confirm_install(component: str, installer: Callable):
     if AUTOMATION_MODE or inquirer3.confirm(f'To {component}?', default=False, show_default=True):
         installer()
 
@@ -91,7 +91,7 @@ def configure_preferences():
 def install_brew_packages(disable: List[str]):
     logger.info('installing brew packages')
 
-    brew_list = brew('list')
+    brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
                 'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
@@ -103,11 +103,16 @@ def install_brew_packages(disable: List[str]):
             packages.remove(p)
 
     for p in packages:
-        if p not in brew_list.split('\n'):
-            brew('install', p, '--force')
+        if p in disable:
+            logger.info(f'skipping {p}')
+            continue
 
-    git('lfs', 'install')
-    sudo('git', 'lfs', 'install', '--system')
+        if p not in brew_list:
+            confirm_install(f'install {p}', brew['install', p, '--force'])
+
+    if 'git-lfs' not in brew_list and 'git-lfs' in brew('list').split('\n'):
+        git('lfs', 'install')
+        sudo('git', 'lfs', 'install', '--system')
 
     casks = {
         'iTerm.app': 'iterm2',
@@ -129,14 +134,16 @@ def install_brew_packages(disable: List[str]):
             logger.info(f'skipping {cask}')
             continue
 
-        if cask in brew_list.split('\n'):
+        if cask in brew_list:
             # skip already installed through brew
             continue
 
-        if not (Path('/Applications') / app).exists() or inquirer3.confirm(
-                f'{app} is already installed. would you like to install latest from brew instead?', default=False):
-            logger.info(f'installing {app}')
-
+        if not (Path('/Applications') / app).exists():
+            confirm_install(f'install {cask}', brew['install', '--cask', cask, '--force'])
+        # Specific confirmation that included in automation mode
+        elif inquirer3.confirm(
+                f'{app} is already installed, but not through brew. would you like to install from brew instead?',
+                default=False):
             try:
                 brew('uninstall', cask)
             except ProcessExecutionError as e:
@@ -145,39 +152,67 @@ def install_brew_packages(disable: List[str]):
 
             brew('install', '--cask', cask, '--force')
 
-    logger.info('installing blacktop\'s ipsw')
-    brew('install', 'blacktop/tap/ipsw')
+    confirm_install('install ipsw', brew['install', 'blacktop/tap/ipsw'])
 
-    logger.info('setting default browser to google chrome')
-    local['defaultbrowser']('chrome')
+    if 'google-chrome' not in brew_list and 'defaultbrowser' in brew_list:
+        brew_list = brew('list').split('\n')
+        if 'google-chrome' in brew_list:
+            confirm_install('set google chrome to be your default browser', local['defaultbrowser']['chrome'])
 
 
 def install_python_packages():
     logger.info('installing python packages')
 
-    python3('-m', 'pip', 'install', '-U', 'pip')
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
 
-    python3('-m', 'pip', 'install', '-U', 'xattr', 'xonsh', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments',
-            'ipython', 'plumbum', 'xontrib-argcomplete', 'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up',
-            'xontrib-vox', 'xontrib-jedi', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2')
+    python_packages = ['xattr', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython', 'plumbum',
+                       'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
+
+    for package in python_packages:
+        confirm_install(f'install {package}', python3['-m', 'pip', 'install', '-U', package])
 
 
 def install_xonsh():
     logger.info('installing xonsh')
 
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
+
+    python3('-m', 'pip', 'install', '-U', 'xonsh')
+
+    confirm_install(f'install xonsh attributes', python3['-m', 'pip', 'install', '-U', 'xontrib-argcomplete',
+                    'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi'])
+
     xonsh_path = shutil.which('xonsh')
     if xonsh_path not in open('/etc/shells', 'r').read():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
-    brew('reinstall', 'fzf')
-    brew('reinstall', 'bash-completion')
+    confirm_install('install/reinstall fzf', brew['reinstall', 'fzf'])
+    confirm_install('install/reinstall bash-completion', brew['reinstall', 'bash-completion'])
 
-    DEV_PATH.mkdir(parents=True, exist_ok=True)
+    confirm_install('set xonsh to be the default shell', chsh['-s', xonsh_path])
 
-    os.chdir(DEV_PATH)
-    git_clone('git@github.com:doronz88/worksetup.git', 'main')
-    cp('worksetup/.xonshrc', Path('~/').expanduser())
-    chsh('-s', xonsh_path)
+    def set_xonshrc():
+        DEV_PATH.mkdir(parents=True, exist_ok=True)
+
+        os.chdir(DEV_PATH)
+        git_clone('git@github.com:doronz88/worksetup.git', 'main')
+        cp('worksetup/.xonshrc', Path('~/').expanduser())
+
+    confirm_install('set ready-made .xonshrc file', set_xonshrc)
+
+
+def set_automation(ctx, param, value):
+    if value:
+        global AUTOMATION_MODE
+        AUTOMATION_MODE = True
+
+
+class BaseCommand(click.Command):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.params[:0] = [
+            click.Option(('-a', '--automated'), is_flag=True, callback=set_automation, expose_value=False,
+                         help='do everything without prompting (unless certain remvals are required)')]
 
 
 @click.group()
@@ -185,33 +220,28 @@ def cli():
     pass
 
 
-@cli.command('configure-preferences')
-@click.option('-a', '--automated', is_flag=True, help='do everything without prompting')
-def cli_configure_preferences(automated):
-    if automated:
-        global AUTOMATION_MODE
-        AUTOMATION_MODE = True
+@cli.command('configure-preferences', cls=BaseCommand)
+def cli_configure_preferences():
     configure_preferences()
 
 
-@cli.command('brew-packages')
+@cli.command('brew-packages', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
 def cli_brew_packages(disable):
     install_brew_packages(disable)
 
 
-@cli.command('python-packages')
+@cli.command('python-packages', cls=BaseCommand)
 def cli_python_packages():
     install_python_packages()
 
 
-@cli.command('xonsh')
+@cli.command('xonsh', cls=BaseCommand)
 def cli_xonsh():
-    install_python_packages()
     install_xonsh()
 
 
-@cli.command('everything')
+@cli.command('everything', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
 def cli_everything(disable):
     configure_preferences()
