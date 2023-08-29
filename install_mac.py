@@ -212,38 +212,44 @@ class BaseCommand(click.Command):
         super().__init__(*args, **kwargs)
         self.params[:0] = [
             click.Option(('-a', '--automated'), is_flag=True, callback=set_automation, expose_value=False,
-                         help='do everything without prompting (unless certain remvals are required)')]
+                         help='do everything without prompting (unless certain removals are required)')]
 
 
 @click.group()
 def cli():
+    """ Automate selected installs """
     pass
 
 
 @cli.command('configure-preferences', cls=BaseCommand)
 def cli_configure_preferences():
+    """ Configure several preferences """
     configure_preferences()
 
 
 @cli.command('brew-packages', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
-def cli_brew_packages(disable):
+def cli_brew_packages(disable: List[str]):
+    """ Install selected brew packages """
     install_brew_packages(disable)
 
 
 @cli.command('python-packages', cls=BaseCommand)
 def cli_python_packages():
+    """ Install selected python packages """
     install_python_packages()
 
 
 @cli.command('xonsh', cls=BaseCommand)
 def cli_xonsh():
+    """ Install xonsh """
     install_xonsh()
 
 
 @cli.command('everything', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
-def cli_everything(disable):
+def cli_everything(disable: List[str]):
+    """ Install everything """
     configure_preferences()
     install_brew_packages(disable)
     install_python_packages()
