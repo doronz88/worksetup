@@ -74,5 +74,6 @@ python3.11 -m pip install -r requirements.txt
 # Usage
 
 ```shell
+# pass -a/--automated for doing everything without prompting (unless certain removals are required)
 python3.11 install_mac.py everything
 ```
