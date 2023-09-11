@@ -318,7 +318,7 @@ aliases['subl'] = _subl
 aliases['010'] = 'open -b com.SweetScape.010Editor'
 aliases['charm'] = 'open -b com.jetbrains.pycharm.ce'
 aliases['ida'] = 'open -b com.hexrays.ida64'
-aliases['sqlitebrwoser'] = 'open -a sqlitebrowser'
+aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
 # -- checkra1n
 
