@@ -31,12 +31,12 @@ AUTOMATION_MODE = False
 
 
 def confirm_install(component: str, installer: Callable):
-    if AUTOMATION_MODE or inquirer3.confirm(f'To {component}?', default=False, show_default=True):
+    if AUTOMATION_MODE or inquirer3.confirm(f'To {component}?', default=False):
         installer()
 
 
 def insert_number_install(message: str, installer: BoundCommand, default_number: int):
-    installer[default_number if AUTOMATION_MODE else inquirer3.text(message, default=default_number)]()
+    installer[default_number if AUTOMATION_MODE else inquirer3.text(message, default=str(default_number))]()
 
 
 def git_clone(repo_url: str, branch='master'):
