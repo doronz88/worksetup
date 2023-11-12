@@ -9,6 +9,7 @@ from typing import List, Callable
 import click
 import coloredlogs
 import inquirer3
+import requests
 from plumbum import local, ProcessExecutionError
 from plumbum.commands.base import BoundCommand
 
@@ -24,6 +25,7 @@ killall = local['killall']
 git = local['git']
 cp = local['cp']
 chsh = local['chsh']
+sh = local['sh']
 
 logger = logging.getLogger(__name__)
 
@@ -172,6 +174,17 @@ def install_python_packages():
         confirm_install(f'install {package}', python3['-m', 'pip', 'install', '-U', package])
 
 
+def install_ohmyzsh() -> None:
+    logger.info('installing ohmyzsh')
+    try:
+        confirm_install('install ohmyzsh',
+                        sh['-c', requests.get(
+                            'https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh').text])
+    except ProcessExecutionError as e:
+        if 'The $ZSH folder already exists' not in e.stdout:
+            raise
+
+
 def install_xonsh():
     logger.info('installing xonsh')
 
@@ -240,6 +253,12 @@ def cli_python_packages():
     install_python_packages()
 
 
+@cli.command('ohmyzsh', cls=BaseCommand)
+def cli_xonsh():
+    """ Install ohmyzsh """
+    install_ohmyzsh()
+
+
 @cli.command('xonsh', cls=BaseCommand)
 def cli_xonsh():
     """ Install xonsh """
@@ -253,6 +272,7 @@ def cli_everything(disable: List[str]):
     configure_preferences()
     install_brew_packages(disable)
     install_python_packages()
+    install_ohmyzsh()
     install_xonsh()
 
 
