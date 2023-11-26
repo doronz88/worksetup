@@ -30,7 +30,11 @@ from xonsh.cli_utils import ArgParserAlias, Arg, Annotated
 if XSH.env.get('FORMATTER_DICT') is None:
     XSH.env['FORMATTER_DICT'] = {}
 
-XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-widgets jedi vox up')
+
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-widgets jedi vox')
 
 CUSTOM_RC = Path('~/.myrc').expanduser()
 # -- ENV
