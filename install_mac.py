@@ -97,7 +97,7 @@ def install_brew_packages(disable: List[str]):
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
                 'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
-                'jq']
+                'jq', 'difftastic']
 
     for p in disable:
         if p in packages:
