@@ -280,7 +280,7 @@ def _plshow(filename: str, uncolored=False):
         return _pretty_json(plistlib.load(f), colored=(not uncolored))
 
 
-def _tarsplit(dirname: str, prefix: str):
+def _tarsplit(dirname: str):
     """
     archives given directory and splits into out
     """
@@ -293,7 +293,8 @@ def _tarsplit(dirname: str, prefix: str):
     tarfile = f'{dirname}.tar'
 
     local['tar']['-cvf', tarfile, dirname] & FG
-    local['split', '-b', '3G', tarfile, prefix] & FG
+    prefix = f'{dirname}_part_'
+    local['split']['-b', '3G', str(tarfile), str(prefix)] & FG
 
 
 def _disable_watchdog():
