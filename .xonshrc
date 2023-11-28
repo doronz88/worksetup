@@ -44,6 +44,7 @@ XSH.env['DEVICE_SSH_PORT'] = 4444
 XSH.env['PROMPT'] = '{env_name}{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch: {}}{RESET} {BOLD_BLUE}{prompt_end}{RESET} '
 XSH.env['PATH'] = [
  '~/.cargo/bin',
+ '~/.local/bin',
  '/usr/local/opt/gnu-tar/libexec/gnubin',
  '/usr/local/opt/make/libexec/gnubin',
  '/usr/local/opt/openjdk/bin',
@@ -279,10 +280,9 @@ def _plshow(filename: str, uncolored=False):
         return _pretty_json(plistlib.load(f), colored=(not uncolored))
 
 
-def _tarsplit(dirname: str):
+def _tarsplit(dirname: str, prefix: str):
     """
     archives given directory and splits into out
-
     """
     dirname = Path(dirname)
 
@@ -352,7 +352,6 @@ aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
 
 # -- tools
 
-aliases['pymobiledevice3'] = 'python3 -m pymobiledevice3'
 aliases['rpcclient'] = 'python3 -m rpcclient'
 aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
 aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
