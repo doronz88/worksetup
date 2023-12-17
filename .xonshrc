@@ -70,7 +70,7 @@ XSH.env['CFLAGS'] = '-I/usr/local/opt/openssl/include -I/opt/homebrew/opt/openss
 XSH.env['CPPFLAGS'] = "-I/usr/local/opt/openssl@1.1/include"
 XSH.env['LSCOLORS'] = 'Gxfxcxdxbxegedabagacad'
 XSH.env['GIT_EXTERNAL_DIFF'] = 'difft'
-XSH.env['SETUPTOOLS_ENABLE_FEATURES'] = 'legacy-editable'
+# XSH.env['SETUPTOOLS_ENABLE_FEATURES'] = 'legacy-editable'
 
 XSH.env['fzf_history_binding'] = "c-r"  # Ctrl+R
 XSH.env['fzf_ssh_binding'] = "c-s"      # Ctrl+S
