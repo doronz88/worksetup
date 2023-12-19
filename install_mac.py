@@ -48,8 +48,8 @@ VSCODE_DEFAULT_SETTINGS = """
     ],
     "autopep8.showNotifications": "always",
     "window.zoomLevel": 1,
-    "workbench.iconTheme": "a-file-icon-vscode"
-
+    "workbench.iconTheme": "a-file-icon-vscode",
+    "gitlens.hovers.enabled": false
 }
 """
 
