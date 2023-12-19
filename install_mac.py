@@ -4,18 +4,54 @@ import shutil
 import sys
 from functools import partial
 from pathlib import Path
-from typing import List, Callable
+from typing import Callable, List
 
 import click
 import coloredlogs
 import inquirer3
 import requests
-from plumbum import local, ProcessExecutionError
+from plumbum import ProcessExecutionError, local
 from plumbum.commands.base import BoundCommand
 
 coloredlogs.install(level=logging.DEBUG)
 
 DEV_PATH = Path('~/dev').expanduser()
+VSCODE_EXTENSION_IDS = [
+    'atommaterial.a-file-icon-vscode', 'ms-python.autopep8', 'ms-vscode.cpptools-extension-pack', 'ms-vscode.cpptools-themes',
+    'llvm-vs-code-extensions.vscode-clangd', 'ms-vscode.cmake-tools', 'qingpeng.common-lisp', 'github.vscode-github-actions',
+    'eamodio.gitlens', 'ms-python.isort', 'mattn.Lisp', 'zhuangtongfa.material-theme', 'ms-python.vscode-pylance',
+    'ms-python.python', 'ms-python.python', 'infosec-intern.yara']
+VSCODE_SETTINGS_FILE = Path('~/Library/Application Support/Code/User/settings.json').expanduser()
+
+VSCODE_DEFAULT_SETTINGS = """
+{
+    "editor.cursorBlinking": "smooth",
+    "security.workspace.trust.untrustedFiles": "open",
+    "git.openRepositoryInParentFolders": "always",
+    "files.associations": {
+        "*.sb": "commonlisp"
+    },
+    "cmake.configureOnOpen": true,
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.diagnosticSeverityOverrides": {
+    },
+    "python.analysis.inlayHints.functionReturnTypes": true,
+    "python.analysis.inlayHints.pytestParameters": true,
+    "python.analysis.inlayHints.variableTypes": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "workbench.colorTheme": "One Dark Pro Darker",
+    "autopep8.args": [
+        "--max-line-length",
+        "127",
+        "--experimental"
+    ],
+    "autopep8.showNotifications": "always",
+    "window.zoomLevel": 1,
+    "workbench.iconTheme": "a-file-icon-vscode"
+
+}
+"""
 
 brew = local['brew']
 python3 = local[sys.executable]
@@ -68,7 +104,7 @@ def configure_preferences():
 
     confirm_install('disable Library Validation',
                     sudo['defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
-                    'DisableLibraryValidation', '-bool', 'true'])
+                         'DisableLibraryValidation', '-bool', 'true'])
 
     # -- Finder
     confirm_install('show every file extension',
@@ -192,7 +228,7 @@ def install_xonsh():
 
     python3('-m', 'pip', 'install', '-U', 'xonsh')
 
-    confirm_install(f'install xonsh attributes', python3['-m', 'pip', 'install', '-U', 'xontrib-argcomplete',
+    confirm_install('install xonsh attributes', python3['-m', 'pip', 'install', '-U', 'xontrib-argcomplete',
                     'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi'])
 
     xonsh_path = shutil.which('xonsh')
@@ -212,6 +248,18 @@ def install_xonsh():
         cp('worksetup/.xonshrc', Path('~/').expanduser())
 
     confirm_install('set ready-made .xonshrc file', set_xonshrc)
+
+
+def overwrite_vscode_settings_file() -> None:
+    VSCODE_SETTINGS_FILE.write_text(VSCODE_DEFAULT_SETTINGS)
+
+
+def configure_vscode() -> None:
+    logger.info('configuring vscode')
+    for ext_id in VSCODE_EXTENSION_IDS:
+        local['code']('--install-extension', ext_id)
+
+    confirm_install('overwrite vscode settings file', overwrite_vscode_settings_file)
 
 
 def set_automation(ctx, param, value):
@@ -254,7 +302,7 @@ def cli_python_packages():
 
 
 @cli.command('ohmyzsh', cls=BaseCommand)
-def cli_xonsh():
+def cli_ohmyzsh():
     """ Install ohmyzsh """
     install_ohmyzsh()
 
@@ -265,12 +313,19 @@ def cli_xonsh():
     install_xonsh()
 
 
+@cli.command('configure-vscode', cls=BaseCommand)
+def cli_configure_vscode():
+    """ Configure vscode """
+    configure_vscode()
+
+
 @cli.command('everything', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
 def cli_everything(disable: List[str]):
     """ Install everything """
     configure_preferences()
     install_brew_packages(disable)
+    configure_vscode()
     install_python_packages()
     install_ohmyzsh()
     install_xonsh()
