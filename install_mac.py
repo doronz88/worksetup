@@ -20,7 +20,7 @@ VSCODE_EXTENSION_IDS = [
     'atommaterial.a-file-icon-vscode', 'ms-python.autopep8', 'ms-vscode.cpptools-extension-pack', 'ms-vscode.cpptools-themes',
     'llvm-vs-code-extensions.vscode-clangd', 'ms-vscode.cmake-tools', 'qingpeng.common-lisp', 'github.vscode-github-actions',
     'eamodio.gitlens', 'ms-python.isort', 'mattn.Lisp', 'zhuangtongfa.material-theme', 'ms-python.vscode-pylance',
-    'ms-python.python', 'ms-python.python', 'infosec-intern.yara', 'ms-vscode.vscode-typescript-next']
+    'ms-python.python', 'infosec-intern.yara', 'ms-vscode.vscode-typescript-next']
 VSCODE_SETTINGS_FILE = Path('~/Library/Application Support/Code/User/settings.json').expanduser()
 
 VSCODE_DEFAULT_SETTINGS = """
