@@ -43,7 +43,7 @@ VSCODE_DEFAULT_SETTINGS = """
     "workbench.colorTheme": "One Dark Pro Darker",
     "autopep8.args": [
         "--max-line-length",
-        "127",
+        "120",
         "--experimental"
     ],
     "isort.args": [
@@ -53,7 +53,7 @@ VSCODE_DEFAULT_SETTINGS = """
         "120"
     ],
     "autopep8.showNotifications": "always",
-    "window.zoomLevel": 1,
+    "window.zoomLevel": 0.7,
     "workbench.iconTheme": "a-file-icon-vscode",
     "gitlens.hovers.enabled": false
 }
