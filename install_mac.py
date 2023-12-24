@@ -55,7 +55,17 @@ VSCODE_DEFAULT_SETTINGS = """
     "autopep8.showNotifications": "always",
     "window.zoomLevel": 0.7,
     "workbench.iconTheme": "a-file-icon-vscode",
-    "gitlens.hovers.enabled": false
+    "gitlens.hovers.enabled": false,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/__pycache__": true,
+    },
+    "files.autoSave": "afterDelay"
 }
 """
 
