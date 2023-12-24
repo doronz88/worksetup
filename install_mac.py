@@ -46,6 +46,12 @@ VSCODE_DEFAULT_SETTINGS = """
         "127",
         "--experimental"
     ],
+    "isort.args": [
+        "-m",
+        "HANGING_INDENT",
+        "-l",
+        "120"
+    ],
     "autopep8.showNotifications": "always",
     "window.zoomLevel": 1,
     "workbench.iconTheme": "a-file-icon-vscode",
