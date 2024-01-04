@@ -194,6 +194,11 @@ def _subl(args):
         os.system(f'open -b com.sublimetext.3 "{args[0]}"')
 
 
+def _pycharm(args):
+    if 0 != os.system(f'open -b com.jetbrains.pycharm.ce "{args[0]}"'):
+        os.system(f'open -b com.jetbrains.pycharm "{args[0]}"')
+
+
 def _rcpull(args):
     parser = ArgumentParser(description='pull latest .xonshrc')
     args = parser.parse_args(args)
@@ -322,7 +327,7 @@ aliases['rcpush'] = _rcpush
 
 aliases['subl'] = _subl
 aliases['010'] = 'open -b com.SweetScape.010Editor'
-aliases['charm'] = 'open -b com.jetbrains.pycharm.ce'
+aliases['charm'] = _pycharm
 aliases['ida'] = 'open -b com.hexrays.ida64'
 aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
