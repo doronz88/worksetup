@@ -181,6 +181,7 @@ def install_brew_packages(disable: List[str]):
         'Flycut.app': 'flycut',
         'Raycast.app': 'raycast',
         'AltTab.app': 'alt-tab',
+        'SensibleSideButtons.app': 'sensible-side-buttons',
     }
 
     for app, cask in casks.items():
