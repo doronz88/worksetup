@@ -3,3 +3,4 @@ click
 plumbum
 inquirer3
 jedi
+requests
