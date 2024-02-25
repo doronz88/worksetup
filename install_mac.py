@@ -17,10 +17,11 @@ coloredlogs.install(level=logging.DEBUG)
 
 DEV_PATH = Path('~/dev').expanduser()
 VSCODE_EXTENSION_IDS = [
-    'atommaterial.a-file-icon-vscode', 'ms-python.autopep8', 'ms-vscode.cpptools-extension-pack', 'ms-vscode.cpptools-themes',
-    'llvm-vs-code-extensions.vscode-clangd', 'ms-vscode.cmake-tools', 'qingpeng.common-lisp', 'github.vscode-github-actions',
-    'eamodio.gitlens', 'ms-python.isort', 'mattn.Lisp', 'zhuangtongfa.material-theme', 'ms-python.vscode-pylance',
-    'ms-python.python', 'infosec-intern.yara', 'ms-vscode.vscode-typescript-next']
+    'atommaterial.a-file-icon-vscode', 'ms-python.autopep8', 'ms-vscode.cpptools-extension-pack',
+    'ms-vscode.cpptools-themes', 'llvm-vs-code-extensions.vscode-clangd', 'ms-vscode.cmake-tools',
+    'qingpeng.common-lisp', 'github.vscode-github-actions', 'eamodio.gitlens', 'ms-python.isort', 'mattn.Lisp',
+    'zhuangtongfa.material-theme', 'ms-python.vscode-pylance', 'ms-python.python', 'infosec-intern.yara',
+    'ms-vscode.vscode-typescript-next']
 VSCODE_SETTINGS_FILE = Path('~/Library/Application Support/Code/User/settings.json').expanduser()
 
 VSCODE_DEFAULT_SETTINGS = """
@@ -132,7 +133,6 @@ def configure_preferences():
                     defaults['write', '-g', 'ignore-devices', '-bool', 'true'])
     confirm_install('disable automatic ios sync',
                     defaults['write', 'com.apple.AMPDevicesAgent', 'dontAutomaticallySyncIPods', '-bool', 'true'])
-
 
     # -- Keyboard (applied only after logout and login)
     confirm_install('change delay until key repeat',
@@ -248,12 +248,18 @@ def install_xonsh():
 
     confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
 
-    python3('-m', 'pip', 'install', '-U', 'xonsh')
+    python3('-m', 'pip', 'install', '-U', 'pipx')
+    python3('-m', 'pipx', 'install', 'xonsh[full]')
 
-    confirm_install('install xonsh attributes', python3['-m', 'pip', 'install', '-U', 'xontrib-argcomplete',
-                    'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi'])
+    # xontribs
+    python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'xontrib-argcomplete',
+            'xontrib-fzf-widgets', 'xontrib-z', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi')
+    
+    # required by the global xonshrc
+    python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'pygments', 'plumbum')
 
-    xonsh_path = shutil.which('xonsh')
+    with local.env(PATH=f'{Path("~/.local/bin").expanduser()}:{os.environ["PATH"]}'):
+        xonsh_path = shutil.which('xonsh')
     if xonsh_path not in open('/etc/shells', 'r').read():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
