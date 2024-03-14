@@ -77,6 +77,19 @@ XSH.env['fzf_ssh_binding'] = "c-s"      # Ctrl+S
 XSH.env['fzf_file_binding'] = "c-t"      # Ctrl+T
 XSH.env['fzf_dir_binding'] = "c-g"      # Ctrl+G
 
+# The SQLite history backend saves command immediately 
+# unlike JSON backend that save the commands at the end of the session.
+XSH.env['XONSH_HISTORY_BACKEND'] = 'sqlite'
+
+# What commands are saved to the history list. By default all commands are saved. 
+# * The option ‘ignoredups’ will not save the command if it matches the previous command.
+# * The option `erasedups` will remove all previous commands that matches and updates the command frequency. 
+#   The minus of `erasedups` is that the history of every session becomes unrepeatable 
+#   because it will have a lack of the command you repeat in another session.
+# Docs: https://xonsh.github.io/envvars.html#histcontrol
+XSH.env['HISTCONTROL'] = 'ignoredups'
+
+
 
 def _default_json_encoder(obj):
     if isinstance(obj, bytes):
@@ -349,6 +362,7 @@ aliases['gst'] = 'git status'
 aliases['gcl'] = 'git clone --recurse-submodules'
 
 # -- shell
+
 aliases['t'] = 'tree'
 aliases['l'] = 'ls -lah'
 aliases['la'] = 'ls -lAh'
