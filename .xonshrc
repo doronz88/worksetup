@@ -90,6 +90,14 @@ XSH.env['XONSH_HISTORY_BACKEND'] = 'sqlite'
 XSH.env['HISTCONTROL'] = 'ignoredups'
 
 
+# Remove front dot in multiline input to make the code copy-pastable.
+XSH.env['MULTILINE_PROMPT'] = ' '
+
+
+# Avoid typing cd just directory path. 
+# Docs: https://xonsh.github.io/envvars.html#auto-cd
+XSH.env['AUTO_CD'] = True
+
 
 def _default_json_encoder(obj):
     if isinstance(obj, bytes):
