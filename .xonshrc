@@ -381,7 +381,6 @@ aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
 
 # -- tools
 
-aliases['rpcclient'] = 'python3 -m rpcclient'
 aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
 aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
