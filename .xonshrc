@@ -335,6 +335,9 @@ def _disable_watchdog():
             pass
         time.sleep(5)
 
+# -- env
+XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
+
 
 # -- xonsh
 
