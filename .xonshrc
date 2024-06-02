@@ -21,6 +21,8 @@ from pygments.token import (Comment, Error, Generic, Name, Number, Operator, Str
 from plumbum import local, FG
 from plumbum.commands.processes import ProcessExecutionError
 
+from xonsh.tools import unthreadable
+from xonsh.events import events
 from xonsh.built_ins import XSH
 from xonsh.pyghooks import register_custom_pygments_style
 from xonsh.ansi_colors import register_custom_ansi_style
@@ -34,7 +36,7 @@ if XSH.env.get('FORMATTER_DICT') is None:
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-widgets jedi vox')
+XSH.builtins.execx('xontrib load z argcomplete coreutils fzf-completions jedi vox')
 
 CUSTOM_RC = Path('~/.myrc').expanduser()
 # -- ENV
@@ -389,6 +391,42 @@ aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
+
+
+@events.on_transform_command
+def expand_braces(cmd, **_):
+    if '[' in cmd or '$(' in cmd or '@(' in cmd:
+        return cmd
+
+    parts = cmd.split()
+    expanded_cmds = []
+    requires_expansion = False
+
+    for part in parts:
+        if "{" in part and "}" in part:
+            prefix, braces, postfix = part.partition("{")
+            options, _, postfix = postfix.partition("}")
+            expanded_parts = [
+                prefix + option + postfix for option in options.split(",")
+            ]
+            expanded_cmds.extend(expanded_parts)
+            requires_expansion = True
+        else:
+            expanded_cmds.append(part)
+
+    if requires_expansion:
+        return " ".join(expanded_cmds)
+
+    return cmd
+
+
+@unthreadable
+def _test(args):
+    import time
+    print('try to ctrl-c before the 10 seconds!')
+    time.sleep(10)
+
+aliases['test'] = _test
 
 
 if CUSTOM_RC.exists():
