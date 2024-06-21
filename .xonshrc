@@ -208,6 +208,7 @@ def _localdevice(args):
     ssh -p $DEVICE_SSH_PORT root@localhost -i ~/.ssh/id_rsa
 
 
+@unthreadable
 def _ggpush(args):
     XSH.builtins.execx(f'git push origin {XSH.env["PROMPT_FIELDS"]["curr_branch"]()} {shlex.join(args)}')
 
@@ -394,7 +395,7 @@ aliases['disable_watchdog'] = _disable_watchdog
 
 
 @events.on_transform_command
-def expand_braces(cmd, **_):
+def expand_braces(cmd, **a):
     if '[' in cmd or '$(' in cmd or '@(' in cmd:
         return cmd
 
