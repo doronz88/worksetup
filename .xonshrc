@@ -355,7 +355,7 @@ aliases['rcpush'] = _rcpush
 aliases['subl'] = _subl
 aliases['010'] = 'open -b com.SweetScape.010Editor'
 aliases['charm'] = _pycharm
-aliases['ida'] = 'open -b com.hexrays.ida64'
+aliases['ida'] = 'open -b com.hexrays.ida'
 aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
 # -- checkra1n
@@ -399,7 +399,7 @@ def expand_braces(cmd, **a):
     if '[' in cmd or '$(' in cmd or '@(' in cmd:
         return cmd
 
-    parts = cmd.split()
+    parts = shlex.split(cmd)
     expanded_cmds = []
     requires_expansion = False
 
