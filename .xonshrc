@@ -392,6 +392,8 @@ aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
+aliases['pmd3'] = 'pymobiledevice3'
+
 
 
 @events.on_transform_command
