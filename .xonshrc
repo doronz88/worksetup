@@ -100,6 +100,9 @@ XSH.env['MULTILINE_PROMPT'] = ' '
 # Docs: https://xonsh.github.io/envvars.html#auto-cd
 XSH.env['AUTO_CD'] = True
 
+# Make DYLD look for additional libraries installed via Homebrew
+XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
+
 
 def _default_json_encoder(obj):
     if isinstance(obj, bytes):
@@ -392,8 +395,6 @@ aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
-aliases['pmd3'] = 'pymobiledevice3'
-
 
 
 @events.on_transform_command
