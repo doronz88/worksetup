@@ -104,7 +104,7 @@ XSH.env['MULTILINE_PROMPT'] = ' '
 XSH.env['AUTO_CD'] = True
 
 # Make DYLD look for additional libraries installed via Homebrew
-XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
+# XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
 
 # Finally, load all modules
 XSH.builtins.execx('xontrib load argcomplete coreutils fzf-completions jedi vox')
