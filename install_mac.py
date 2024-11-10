@@ -115,9 +115,13 @@ def git_clone(repo_url: str, branch='master'):
 def configure_preferences():
     logger.info('configuring preferences')
 
-    confirm_install(
-        'disable master system policy (this would enable execution from everywhere without "open anyway" prompt',
-        sudo['spctl', '--master-disable'])
+    try:
+        confirm_install(
+            'disable master system policy (this would enable execution from everywhere without "open anyway" prompt',
+            sudo['spctl', '--master-disable'])
+    except ProcessExecutionError as e:
+        if 'Globally disabling the assessment system needs to be confirmed in System Settings.' not in e.stdout:
+            raise
 
     confirm_install('disable Library Validation',
                     sudo['defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
