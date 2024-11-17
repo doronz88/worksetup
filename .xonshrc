@@ -34,11 +34,6 @@ if XSH.env.get('FORMATTER_DICT') is None:
     XSH.env['FORMATTER_DICT'] = {}
 
 
-$XONSH_SHOW_TRACEBACK = True
-
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 CUSTOM_RC = Path('~/.myrc').expanduser()
 # -- ENV
 XSH.env['DEVICE_SSH_PORT'] = 2222
@@ -112,7 +107,7 @@ XSH.builtins.execx('xontrib load argcomplete coreutils fzf-completions jedi vox'
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
 else:
-    print('Could not locate zoxide in your path. Please install `brew install zoxide` first')
+    print('Could not locate zoxide in your path. Please install `brew install zocide` first')
 
 
 def _default_json_encoder(obj):
