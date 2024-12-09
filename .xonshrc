@@ -34,9 +34,6 @@ if XSH.env.get('FORMATTER_DICT') is None:
     XSH.env['FORMATTER_DICT'] = {}
 
 
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
 CUSTOM_RC = Path('~/.myrc').expanduser()
 # -- ENV
 XSH.env['DEVICE_SSH_PORT'] = 2222
