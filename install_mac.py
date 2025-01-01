@@ -125,7 +125,7 @@ def configure_preferences():
 
     confirm_install('disable Library Validation',
                     sudo['defaults', 'write', '/Library/Preferences/com.apple.security.libraryvalidation.plist',
-                         'DisableLibraryValidation', '-bool', 'true'])
+                    'DisableLibraryValidation', '-bool', 'true'])
 
     # -- Finder
     confirm_install('show every file extension',
@@ -157,7 +157,7 @@ def install_brew_packages(disable: List[str]):
     brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
-                'ncdu', 'watch', 'bash-completion', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
+                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
                 'jq', 'difftastic']
 
     for p in disable:
@@ -258,7 +258,7 @@ def install_xonsh():
     # xontribs
     python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'xontrib-argcomplete',
             'xontrib-fzf-widgets', 'xontrib-zoxide', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi')
-    
+
     # required by the global xonshrc
     python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'pygments', 'plumbum')
 
