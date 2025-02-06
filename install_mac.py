@@ -229,11 +229,12 @@ def install_python_packages():
 
     confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
 
-    python_packages = ['xattr', 'pyfzf', 'artifactory', 'humanfriendly', 'pygments', 'ipython', 'plumbum',
-                       'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
+    python3('-m', 'pip', 'install', '-U', 'pipx')
+
+    python_packages = ['xattr', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
     for package in python_packages:
-        confirm_install(f'install {package}', python3['-m', 'pip', 'install', '-U', package])
+        confirm_install(f'install {package}', python3['-m', 'pipx', 'install', package])
 
 
 def install_ohmyzsh() -> None:
@@ -257,7 +258,7 @@ def install_xonsh():
 
     # xontribs
     python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'xontrib-argcomplete',
-            'xontrib-fzf-widgets', 'xontrib-zoxide', 'xontrib-up', 'xontrib-vox', 'xontrib-jedi')
+            'xontrib-fzf-widgets', 'xontrib-zoxide', 'xontrib-vox', 'xontrib-jedi')
 
     # required by the global xonshrc
     python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'pygments', 'plumbum')
@@ -268,7 +269,7 @@ def install_xonsh():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
     confirm_install('install/reinstall fzf', brew['reinstall', 'fzf'])
-    confirm_install('install/reinstall bash-completion', brew['reinstall', 'bash-completion'])
+    confirm_install('install/reinstall bash-completion@2', brew['reinstall', 'bash-completion@2'])
 
     confirm_install('set xonsh to be the default shell', chsh['-s', xonsh_path])
 
