@@ -102,7 +102,7 @@ XSH.env['AUTO_CD'] = True
 # XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
 
 # Finally, load all modules
-XSH.builtins.execx('xontrib load argcomplete coreutils fzf-completions jedi vox')
+XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi vox')
 
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
