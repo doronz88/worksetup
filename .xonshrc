@@ -107,7 +107,7 @@ XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi vox')
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
 else:
-    print('Could not locate zoxide in your path. Please install `brew install zocide` first')
+    print('Could not locate zoxide in your path. Please install `brew install zoxide` first')
 
 
 def _default_json_encoder(obj):
