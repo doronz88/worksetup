@@ -49,10 +49,10 @@ Install Homebrew:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Install `python3.11`:
+Install `python3.13`:
 
 ```shell
-brew install python@3.11
+brew install python@3.13
 ```
 
 Make sure to have an SSH keypair:
@@ -68,12 +68,12 @@ mkdir ~/dev
 cd ~/dev
 git clone git@github.com:doronz88/worksetup.git
 cd worksetup
-python3.11 -m pip install -r requirements.txt
+python3.13 -m pip install -r requirements.txt --break-system-packages
 ```
 
 # Usage
 
 ```shell
 # pass -a/--automated for doing everything without prompting (unless certain removals are required)
-python3.11 install_mac.py everything
+python3.13 install_mac.py everything
 ```

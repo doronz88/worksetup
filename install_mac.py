@@ -157,7 +157,7 @@ def install_brew_packages(disable: List[str]):
     brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
-                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'python-tk@3.9', 'python-tk@3.11', 'node', 'drawio',
+                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'python-tk@3.13', 'node', 'drawio',
                 'jq', 'difftastic']
 
     for p in disable:
@@ -227,9 +227,9 @@ def install_brew_packages(disable: List[str]):
 def install_python_packages():
     logger.info('installing python packages')
 
-    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip', '--break-system-packages'])
 
-    python3('-m', 'pip', 'install', '-U', 'pipx')
+    python3('-m', 'pip', 'install', '-U', 'pipx', '--break-system-packages')
 
     python_packages = ['xattr', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
@@ -251,9 +251,9 @@ def install_ohmyzsh() -> None:
 def install_xonsh():
     logger.info('installing xonsh')
 
-    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip'])
+    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip', '--break-system-packages'])
 
-    python3('-m', 'pip', 'install', '-U', 'pipx')
+    python3('-m', 'pip', 'install', '-U', 'pipx', '--break-system-packages')
     python3('-m', 'pipx', 'install', 'xonsh[full]')
 
     # xontribs
@@ -264,10 +264,11 @@ def install_xonsh():
     python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'pygments', 'plumbum')
 
     with local.env(PATH=f'{Path("~/.local/bin").expanduser()}:{os.environ["PATH"]}'):
-        xonsh_path = shutil.which('xonsh')
+        xonsh_path = str(local['xonsh'])
     if xonsh_path not in open('/etc/shells', 'r').read():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
+    confirm_install('install/reinstall zoxide', brew['reinstall', 'zoxide'])
     confirm_install('install/reinstall fzf', brew['reinstall', 'fzf'])
     confirm_install('install/reinstall bash-completion@2', brew['reinstall', 'bash-completion@2'])
 
