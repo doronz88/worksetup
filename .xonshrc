@@ -393,6 +393,7 @@ aliases['ll'] = 'ls -lh'
 aliases['ls'] = 'ls -FG'
 aliases['lsa'] = 'ls -lah'
 aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
+aliases['grep'] = 'grep --line-buffered'
 
 # -- tools
 
