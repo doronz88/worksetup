@@ -231,6 +231,13 @@ def _pycharm(args):
     if 0 != os.system(f'open -b com.jetbrains.pycharm.ce "{args[0]}"'):
         os.system(f'open -b com.jetbrains.pycharm "{args[0]}"')
 
+def _clion(args):
+    if 0 != os.system(f'open -b com.jetbrains.clion "{args[0]}"'):
+        os.system(f'open -b com.jetbrains.clion "{args[0]}"')
+
+def _webstorm(args):
+    if 0 != os.system(f'open -b com.jetbrains.webstorm "{args[0]}"'):
+        os.system(f'open -b com.jetbrains.webstorm "{args[0]}"')
 
 def _rcpull(args):
     parser = ArgumentParser(description='pull latest .xonshrc')
@@ -332,6 +339,8 @@ aliases['rcpush'] = _rcpush
 aliases['subl'] = _subl
 aliases['010'] = 'open -b com.SweetScape.010Editor'
 aliases['charm'] = _pycharm
+aliases['clion'] = _clion
+aliases['ws'] = _webstorm
 aliases['ida'] = 'open -b com.hexrays.ida'
 aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
