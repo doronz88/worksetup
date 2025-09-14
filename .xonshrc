@@ -202,6 +202,8 @@ register_custom_ansi_style('doronz', ANSI_STYLE)
 
 XSH.env['XONSH_COLOR_STYLE'] = 'doronz'
 
+XSH.env['UV_COMPILE_BYTECODE'] = '1'
+
 
 # -- ALIAS
 
