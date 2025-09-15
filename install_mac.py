@@ -133,8 +133,8 @@ def configure_preferences():
     confirm_install('show path bar on finder', defaults['write', 'com.apple.finder', 'ShowPathbar', '-bool', 'true'])
     confirm_install('set finder to details view',
                     defaults['write', 'com.apple.finder', 'FXPreferredViewStyle', '-string', '-Nlsv'])
-    confirm_install('disable recovery state detection',
-                    defaults['write', '-g', 'ignore-devices', '-bool', 'true'])
+    # confirm_install('disable recovery state detection',
+    #                 defaults['write', '-g', 'ignore-devices', '-bool', 'true'])
     confirm_install('disable automatic ios sync',
                     defaults['write', 'com.apple.AMPDevicesAgent', 'dontAutomaticallySyncIPods', '-bool', 'true'])
 
