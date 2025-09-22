@@ -1,7 +1,15 @@
+# /// script
+# dependencies = [
+#   "requests",
+#   "plumbum",
+#   "typer",
+#   "coloredlogs",
+#   "inquirer3",
+# ]
+# ///
+
 import logging
 import os
-import shutil
-import sys
 from functools import partial
 from pathlib import Path
 from typing import Callable, List
@@ -10,8 +18,10 @@ import click
 import coloredlogs
 import inquirer3
 import requests
+import typer
 from plumbum import ProcessExecutionError, local
 from plumbum.commands.base import BoundCommand
+from typer.core import TyperCommand
 
 coloredlogs.install(level=logging.DEBUG)
 
@@ -71,7 +81,6 @@ VSCODE_DEFAULT_SETTINGS = """
 """
 
 brew = local['brew']
-python3 = local[sys.executable]
 sudo = local['sudo']
 defaults = local['defaults']
 killall = local['killall']
@@ -79,6 +88,7 @@ git = local['git']
 cp = local['cp']
 chsh = local['chsh']
 sh = local['sh']
+uv = local['uv']
 
 logger = logging.getLogger(__name__)
 
@@ -157,8 +167,7 @@ def install_brew_packages(disable: List[str]):
     brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
-                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'python-tk@3.13', 'node', 'drawio',
-                'jq', 'difftastic']
+                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'node', 'drawio', 'jq', 'difftastic']
 
     for p in disable:
         if p in packages:
@@ -224,17 +233,13 @@ def install_brew_packages(disable: List[str]):
             confirm_install('set google chrome to be your default browser', local['defaultbrowser']['chrome'])
 
 
-def install_python_packages():
+def install_python_packages() -> None:
     logger.info('installing python packages')
-
-    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip', '--break-system-packages'])
-
-    python3('-m', 'pip', 'install', '-U', 'pipx', '--break-system-packages')
 
     python_packages = ['xattr', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
     for package in python_packages:
-        confirm_install(f'install {package}', python3['-m', 'pipx', 'install', package])
+        confirm_install(f'Install {package}', uv['tool', 'install', package])
 
 
 def install_ohmyzsh() -> None:
@@ -251,28 +256,32 @@ def install_ohmyzsh() -> None:
 def install_xonsh():
     logger.info('installing xonsh')
 
-    confirm_install('upgrade pip', python3['-m', 'pip', 'install', '-U', 'pip', '--break-system-packages'])
+    uv('tool', 'install', 'xonsh[full]',
+       # xpip
+       '--with', 'pip',
 
-    python3('-m', 'pip', 'install', '-U', 'pipx', '--break-system-packages')
-    python3('-m', 'pipx', 'install', 'xonsh[full]')
+       # xontribs
+       '--with', 'xontrib-argcomplete',
+       '--with', 'xontrib-fzf-widgets',
+       '--with', 'xontrib-zoxide',
+       '--with', 'xontrib-vox',
+       '--with', 'xontrib-jedi',
 
-    # xontribs
-    python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'xontrib-argcomplete',
-            'xontrib-fzf-widgets', 'xontrib-zoxide', 'xontrib-vox', 'xontrib-jedi')
-
-    # required by the global xonshrc
-    python3('-m', 'pipx', 'runpip', 'xonsh', 'install', '-U', 'pygments', 'plumbum')
+       # globalrc
+       '--with', 'pygments',
+       '--with', 'plumbum',
+       )
 
     with local.env(PATH=f'{Path("~/.local/bin").expanduser()}:{os.environ["PATH"]}'):
         xonsh_path = str(local['xonsh'])
     if xonsh_path not in open('/etc/shells', 'r').read():
         sudo('sh', '-c', f'echo {xonsh_path} >> /etc/shells')
 
-    confirm_install('install/reinstall zoxide', brew['reinstall', 'zoxide'])
-    confirm_install('install/reinstall fzf', brew['reinstall', 'fzf'])
-    confirm_install('install/reinstall bash-completion@2', brew['reinstall', 'bash-completion@2'])
+    confirm_install('Install/Reinstall zoxide', brew['reinstall', 'zoxide'])
+    confirm_install('Install/Reinstall fzf', brew['reinstall', 'fzf'])
+    confirm_install('Install/Reinstall bash-completion@2', brew['reinstall', 'bash-completion@2'])
 
-    confirm_install('set xonsh to be the default shell', chsh['-s', xonsh_path])
+    confirm_install('Set xonsh to be the default shell', chsh['-s', xonsh_path])
 
     def set_xonshrc():
         DEV_PATH.mkdir(parents=True, exist_ok=True)
@@ -281,7 +290,7 @@ def install_xonsh():
         git_clone('git@github.com:doronz88/worksetup.git', 'main')
         cp('worksetup/.xonshrc', Path('~/').expanduser())
 
-    confirm_install('set ready-made .xonshrc file', set_xonshrc)
+    confirm_install('Set ready-made .xonshrc file', set_xonshrc)
 
 
 def overwrite_vscode_settings_file() -> None:
@@ -302,7 +311,7 @@ def set_automation(ctx, param, value):
         AUTOMATION_MODE = True
 
 
-class BaseCommand(click.Command):
+class BaseCommand(TyperCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.params[:0] = [
@@ -310,10 +319,7 @@ class BaseCommand(click.Command):
                          help='do everything without prompting (unless certain removals are required)')]
 
 
-@click.group()
-def cli():
-    """ Automate selected installs """
-    pass
+cli = typer.Typer(help='Automate selected installs')
 
 
 @cli.command('configure-preferences', cls=BaseCommand)
