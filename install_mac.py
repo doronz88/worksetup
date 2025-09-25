@@ -12,7 +12,7 @@ import logging
 import os
 from functools import partial
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 import click
 import coloredlogs
@@ -360,8 +360,7 @@ def cli_configure_vscode():
 
 
 @cli.command('everything', cls=BaseCommand)
-@click.option('-d', '--disable', multiple=True)
-def cli_everything(disable: List[str]):
+def cli_everything(disable: Optional[list[str]] = None) -> None:
     """ Install everything """
     configure_preferences()
     install_brew_packages(disable)
