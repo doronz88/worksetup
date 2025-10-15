@@ -161,8 +161,11 @@ def configure_preferences():
     killall('Finder')
 
 
-def install_brew_packages(disable: List[str]):
+def install_brew_packages(disable: Optional[list[str]] = None) -> None:
     logger.info('installing brew packages')
+
+    if disable is None:
+        disable = []
 
     brew_list = brew('list').split('\n')
 
@@ -330,7 +333,7 @@ def cli_configure_preferences():
 
 @cli.command('brew-packages', cls=BaseCommand)
 @click.option('-d', '--disable', multiple=True)
-def cli_brew_packages(disable: List[str]):
+def cli_brew_packages(disable: Optional[list[str]] = None) -> None:
     """ Install selected brew packages """
     install_brew_packages(disable)
 
