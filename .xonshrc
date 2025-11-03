@@ -10,6 +10,7 @@ import time
 import shutil
 import tempfile
 import plistlib
+import subprocess
 from datetime import datetime
 from uuid import UUID
 from argparse import ArgumentParser
@@ -324,6 +325,41 @@ def _disable_watchdog():
             pass
         time.sleep(5)
 
+
+def _open_github(args):
+    try:
+        import webbrowser
+        from pathlib import Path
+
+        # Ensure we're inside a Git repo
+        root = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip()
+        os.chdir(root)
+
+        # Get current remote URL
+        remote_url = subprocess.check_output(['git', 'remote', 'get-url', 'origin'], text=True).strip()
+
+        # Get current branch name
+        branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], text=True).strip()
+
+        # Parse remote URL
+        if remote_url.startswith('git@'):
+            # git@github.com:user/repo.git
+            _, path = remote_url.split(':', 1)
+            url = f'https://github.com/{path}'
+        elif remote_url.startswith('https://') or remote_url.startswith('http://'):
+            url = remote_url
+        else:
+            print(f"Unsupported remote URL: {remote_url}")
+            return
+
+        url = url.rstrip('.git')
+        url += f'/tree/{branch}'
+        webbrowser.open(url)
+    except subprocess.CalledProcessError:
+        print('Not a git repository or no remote "origin" set.')
+    except Exception as e:
+        print(f'Error: {e}')
+
 # -- env
 XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 
@@ -354,6 +390,7 @@ aliases['localdevice'] = _localdevice
 
 # -- git
 
+aliases['github'] = _open_github
 aliases['ga'] = 'git add'
 aliases['ggpush'] = _ggpush
 aliases['gco'] = 'git checkout'
