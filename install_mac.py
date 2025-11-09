@@ -273,6 +273,8 @@ def install_xonsh():
        # globalrc
        '--with', 'pygments',
        '--with', 'plumbum',
+
+       '--python', '3.13'
        )
 
     with local.env(PATH=f'{Path("~/.local/bin").expanduser()}:{os.environ["PATH"]}'):
