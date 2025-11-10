@@ -267,7 +267,7 @@ def install_xonsh():
        '--with', 'xontrib-argcomplete',
        '--with', 'xontrib-fzf-widgets',
        '--with', 'xontrib-zoxide',
-       '--with', 'xontrib-vox',
+       '--with', 'xontrib-uvox',
        '--with', 'xontrib-jedi',
 
        # globalrc
