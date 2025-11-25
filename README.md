@@ -49,6 +49,12 @@ Install Homebrew:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
+Make sure your PATH is set up:
+
+```shell
+export PATH=$PATH:~/.local/bin:/opt/homebrew/bin
+```
+
 Install uv:
 
 ```shell
