@@ -103,7 +103,7 @@ XSH.env['AUTO_CD'] = True
 # XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
 
 # Finally, load all modules
-XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi vox')
+XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi')
 
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
@@ -410,6 +410,7 @@ aliases['ls'] = 'ls -FG'
 aliases['lsa'] = 'ls -lah'
 aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
 aliases['grep'] = 'grep --line-buffered'
+aliases['vox'] = 'uvox'
 
 # -- tools
 
