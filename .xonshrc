@@ -22,6 +22,8 @@ from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
 from plumbum import local, FG
 from plumbum.commands.processes import ProcessExecutionError
+from prompt_toolkit.keys import Keys
+from prompt_toolkit.application import run_in_terminal
 
 from xonsh.tools import unthreadable
 from xonsh.events import events
@@ -420,6 +422,22 @@ aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 aliases['disable_watchdog'] = _disable_watchdog
 
+@events.on_ptk_create
+def custom_keybindings(bindings, **kw):
+
+    @bindings.add(Keys.F12)
+    def restart_device(event):
+
+        def _run():
+            subprocess.run(
+                shlex.split("pymobiledevice3 diagnostics restart"),
+                check=False,
+            )
+            print("\nRestarting device", flush=True)
+
+        # Give the terminal to the subprocess (fixes Enter / stdin issues)
+        run_in_terminal(_run)
+        event.app.invalidate()
 
 @events.on_transform_command
 def expand_braces(cmd, **a):
