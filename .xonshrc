@@ -248,22 +248,23 @@ def _rcpull(args):
     parser = ArgumentParser(description='pull latest .xonshrc')
     args = parser.parse_args(args)
 
-    cd $WORKSETUP_ROOT/worksetup
-    ggpull
-    cp .xonshrc ~/
-    cd -
+    XSH.builtins.execx("cd $WORKSETUP_ROOT/worksetup")
+    XSH.builtins.execx("ggpull")
+    XSH.builtins.execx("cp .xonshrc ~/")
+    XSH.builtins.execx("cd -")
+    XSH.builtins.execx("reload")
 
 
-def _rcpush(args):
+def _rcpush(args) -> None:
     parser = ArgumentParser(description='push latest .xonshrc')
     args = parser.parse_args(args)
 
-    cd $WORKSETUP_ROOT/worksetup
-    cp ~/.xonshrc .
-    ga .xonshrc
-    git commit -m 'update .xonshrc'
-    ggpush
-    cd -
+    XSH.builtins.execx("cd $WORKSETUP_ROOT/worksetup")
+    XSH.builtins.execx("cp ~/.xonshrc .")
+    XSH.builtins.execx("ga .xonshrc")
+    XSH.builtins.execx("git commit -m 'update .xonshrc'")
+    XSH.builtins.execx("ggpush")
+    XSH.builtins.execx("cd -")
 
 
 def _rootca() -> None:
