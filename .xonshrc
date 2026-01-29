@@ -368,59 +368,59 @@ XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 
 # -- xonsh
 
-aliases['reload'] = 'source ~/.xonshrc'
-aliases['globalrc'] = 'code ~/.xonshrc'
-aliases['localrc'] = f'code {CUSTOM_RC}'
-aliases['rcpull'] = _rcpull
-aliases['rcpush'] = _rcpush
+XSH.aliases['reload'] = 'source ~/.xonshrc'
+XSH.aliases['globalrc'] = 'code ~/.xonshrc'
+XSH.aliases['localrc'] = f'code {CUSTOM_RC}'
+XSH.aliases['rcpull'] = _rcpull
+XSH.aliases['rcpush'] = _rcpush
 
 # -- apps
 
-aliases['subl'] = _subl
-aliases['010'] = 'open -b com.SweetScape.010Editor'
-aliases['charm'] = _pycharm
-aliases['clion'] = _clion
-aliases['ws'] = _webstorm
-aliases['ida'] = 'open -b com.hexrays.ida'
-aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
+XSH.aliases['subl'] = _subl
+XSH.aliases['010'] = 'open -b com.SweetScape.010Editor'
+XSH.aliases['charm'] = _pycharm
+XSH.aliases['clion'] = _clion
+XSH.aliases['ws'] = _webstorm
+XSH.aliases['ida'] = 'open -b com.hexrays.ida'
+XSH.aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
 # -- checkra1n
 
-aliases['get_file'] = _get_file
-aliases['put_file'] = _put_file
-aliases['localdevice'] = _localdevice
+XSH.aliases['get_file'] = _get_file
+XSH.aliases['put_file'] = _put_file
+XSH.aliases['localdevice'] = _localdevice
 
 # -- git
 
-aliases['github'] = _open_github
-aliases['ga'] = 'git add'
-aliases['ggpush'] = _ggpush
-aliases['gco'] = 'git checkout'
-aliases['ggpull'] = 'git pull'
-aliases['glog'] = 'git log --oneline --decorate --graph'
-aliases['gd'] = 'git diff'
-aliases['gst'] = 'git status'
-aliases['gcl'] = 'git clone --recurse-submodules'
+XSH.aliases['github'] = _open_github
+XSH.aliases['ga'] = 'git add'
+XSH.aliases['ggpush'] = _ggpush
+XSH.aliases['gco'] = 'git checkout'
+XSH.aliases['ggpull'] = 'git pull'
+XSH.aliases['glog'] = 'git log --oneline --decorate --graph'
+XSH.aliases['gd'] = 'git diff'
+XSH.aliases['gst'] = 'git status'
+XSH.aliases['gcl'] = 'git clone --recurse-submodules'
 
 # -- shell
 
-aliases['t'] = 'tree'
-aliases['l'] = 'ls -lah'
-aliases['la'] = 'ls -lAh'
-aliases['ll'] = 'ls -lh'
-aliases['ls'] = 'ls -FG'
-aliases['lsa'] = 'ls -lah'
-aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
-aliases['grep'] = 'grep --line-buffered'
-aliases['vox'] = 'uvox'
+XSH.aliases['t'] = 'tree'
+XSH.aliases['l'] = 'ls -lah'
+XSH.aliases['la'] = 'ls -lAh'
+XSH.aliases['ll'] = 'ls -lh'
+XSH.aliases['ls'] = 'ls -FG'
+XSH.aliases['lsa'] = 'ls -lah'
+XSH.aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
+XSH.aliases['grep'] = 'grep --line-buffered'
+XSH.aliases['vox'] = 'uvox'
 
 # -- tools
 
-aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
-aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
-aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
-aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
-aliases['disable_watchdog'] = _disable_watchdog
+XSH.aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
+XSH.aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
+XSH.aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
+XSH.aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
+XSH.aliases['disable_watchdog'] = _disable_watchdog
 
 @events.on_ptk_create
 def custom_keybindings(bindings, **kw):
@@ -472,7 +472,7 @@ def _test(args):
     print('try to ctrl-c before the 10 seconds!')
     time.sleep(10)
 
-aliases['test'] = _test
+XSH.aliases['test'] = _test
 
 
 if CUSTOM_RC.exists():
