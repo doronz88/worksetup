@@ -369,8 +369,8 @@ XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 # -- xonsh
 
 aliases['reload'] = 'source ~/.xonshrc'
-aliases['globalrc'] = 'subl ~/.xonshrc'
-aliases['localrc'] = f'subl {CUSTOM_RC}'
+aliases['globalrc'] = 'code ~/.xonshrc'
+aliases['localrc'] = f'code {CUSTOM_RC}'
 aliases['rcpull'] = _rcpull
 aliases['rcpush'] = _rcpush
 
