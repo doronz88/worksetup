@@ -19,7 +19,8 @@ from typing import List
 from pathlib import Path
 from pygments import highlight, formatters, lexers
 from pygments.style import Style
-from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String, Text, Whitespace, Keyword, Literal, Other, Punctuation)
+from pygments.token import (Comment, Error, Generic, Name, Number, Operator, String,
+                            Text, Whitespace, Keyword, Literal, Other, Punctuation)
 from plumbum import local, FG
 from plumbum.commands.processes import ProcessExecutionError
 from prompt_toolkit.keys import Keys
@@ -38,33 +39,33 @@ if XSH.env.get('FORMATTER_DICT') is None:
 
 
 CUSTOM_RC = Path('~/.myrc').expanduser()
+
 # -- ENV
-XSH.env['DEVICE_SSH_PORT'] = 2222
 XSH.env['WORKSETUP_ROOT'] = '~/dev'
 # XSH.env['DEVICE_SSH_PORT'] = 4444
 XSH.env['PROMPT'] = '{env_name}{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch: {}}{RESET} {BOLD_BLUE}{prompt_end}{RESET} '
 XSH.env['PATH'] = [
- '~/.cargo/bin',
- '~/.local/bin',
- '/usr/local/opt/gnu-tar/libexec/gnubin',
- '/usr/local/opt/make/libexec/gnubin',
- '/usr/local/opt/openjdk/bin',
- '/usr/local/opt/openssl@1.1/bin',
- '/usr/libexec',
- '/opt/homebrew/bin',
- '/usr/local/bin',
- '/Library/Frameworks/Python.framework/Versions/3.10/bin',
- '/usr/sbin',
- '/usr/bin',
- '/opt/bin',
- '/sbin',
- '/bin',
- '/Library/Apple/usr/bin',
- '/Applications/Wireshark.app/Contents/MacOS',
- '/usr/local/opt/fzf/bin',
- '~/Library/Python/3.9/bin',
- '~/Library/Python/3.8/bin',
- '~/Library/Python/3.10/bin']
+    '~/.cargo/bin',
+    '~/.local/bin',
+    '/usr/local/opt/gnu-tar/libexec/gnubin',
+    '/usr/local/opt/make/libexec/gnubin',
+    '/usr/local/opt/openjdk/bin',
+    '/usr/local/opt/openssl@1.1/bin',
+    '/usr/libexec',
+    '/opt/homebrew/bin',
+    '/usr/local/bin',
+    '/Library/Frameworks/Python.framework/Versions/3.10/bin',
+    '/usr/sbin',
+    '/usr/bin',
+    '/opt/bin',
+    '/sbin',
+    '/bin',
+    '/Library/Apple/usr/bin',
+    '/Applications/Wireshark.app/Contents/MacOS',
+    '/usr/local/opt/fzf/bin',
+    '~/Library/Python/3.9/bin',
+    '~/Library/Python/3.8/bin',
+    '~/Library/Python/3.10/bin']
 os.environ['PATH'] = ':'.join(str(Path(p).expanduser().absolute()) for p in XSH.env['PATH'])
 
 XSH.env['PKG_CONFIG_PATH'] = '/usr/local/opt/openssl@1.1/lib/pkgconfig:/usr/local/opt/curl/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig:/usr/local/opt/readline/lib/pkgconfig'
@@ -80,14 +81,14 @@ XSH.env['fzf_ssh_binding'] = "c-s"      # Ctrl+S
 XSH.env['fzf_file_binding'] = "c-t"      # Ctrl+T
 XSH.env['fzf_dir_binding'] = "c-g"      # Ctrl+G
 
-# The SQLite history backend saves command immediately 
+# The SQLite history backend saves command immediately
 # unlike JSON backend that save the commands at the end of the session.
 XSH.env['XONSH_HISTORY_BACKEND'] = 'sqlite'
 
-# What commands are saved to the history list. By default all commands are saved. 
+# What commands are saved to the history list. By default all commands are saved.
 # * The option ‘ignoredups’ will not save the command if it matches the previous command.
-# * The option `erasedups` will remove all previous commands that matches and updates the command frequency. 
-#   The minus of `erasedups` is that the history of every session becomes unrepeatable 
+# * The option `erasedups` will remove all previous commands that matches and updates the command frequency.
+#   The minus of `erasedups` is that the history of every session becomes unrepeatable
 #   because it will have a lack of the command you repeat in another session.
 # Docs: https://xonsh.github.io/envvars.html#histcontrol
 XSH.env['HISTCONTROL'] = 'ignoredups'
@@ -97,9 +98,13 @@ XSH.env['HISTCONTROL'] = 'ignoredups'
 XSH.env['MULTILINE_PROMPT'] = ' '
 
 
-# Avoid typing cd just directory path. 
+# Avoid typing cd just directory path.
 # Docs: https://xonsh.github.io/envvars.html#auto-cd
 XSH.env['AUTO_CD'] = True
+
+
+XSH.env['UV_COMPILE_BYTECODE'] = '1'
+XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 
 # Make DYLD look for additional libraries installed via Homebrew
 # XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
@@ -133,10 +138,11 @@ def _pretty_json(buf, colored=True, default=_default_json_encoder):
 
 # -- STYLE
 
-ANSI_STYLE = {
-    'BLACK': '#282828', 'BLUE': '#458588', 'CYAN': '#689D6A', 'DEFAULT': '#D4EB98', 'GREEN': '#98971A', 'ORANGE': '#D65D0E', 'PURPLE': '#b16286', 'RED': '#CC441D', 'WHITE': '#EBDBB2', 'YELLOW': '#D79921',
-    'INTENSE_BLACK': '#665C54', 'INTENSE_BLUE': '#83A598', 'INTENSE_CYAN': '#8EC07C', 'INTENSE_GREEN': '#b8bb26', 'INTENSE_ORANGE': '#fe8019', 'INTENSE_PURPLE': '#D3869B', 'INTENSE_RED': '#fb4934', 'INTENSE_WHITE': '#FBF1F7', 'INTENSE_YELLOW': '#FA8D2F',
-}
+ANSI_STYLE = {'BLACK': '#282828', 'BLUE': '#458588', 'CYAN': '#689D6A', 'DEFAULT': '#D4EB98', 'GREEN': '#98971A',
+              'ORANGE': '#D65D0E', 'PURPLE': '#b16286', 'RED': '#CC441D', 'WHITE': '#EBDBB2', 'YELLOW': '#D79921',
+              'INTENSE_BLACK': '#665C54', 'INTENSE_BLUE': '#83A598', 'INTENSE_CYAN': '#8EC07C',
+              'INTENSE_GREEN': '#b8bb26', 'INTENSE_ORANGE': '#fe8019', 'INTENSE_PURPLE': '#D3869B',
+              'INTENSE_RED': '#fb4934', 'INTENSE_WHITE': '#FBF1F7', 'INTENSE_YELLOW': '#FA8D2F', }
 
 BG_COLOR = ANSI_STYLE['BLACK']
 PG_STYLE = {
@@ -202,49 +208,95 @@ PG_STYLE = {
 
 register_custom_pygments_style('doronz', PG_STYLE, background_color=BG_COLOR)
 register_custom_ansi_style('doronz', ANSI_STYLE)
-
 XSH.env['XONSH_COLOR_STYLE'] = 'doronz'
 
-XSH.env['UV_COMPILE_BYTECODE'] = '1'
+
+TAB_COLORS = {
+    "red": "echo '\a\033]6;1;bg;red;brightness;200\a\033]6;1;bg;green;brightness;0\a\033]6;1;bg;blue;brightness;0\a'",
+    "green": "echo '\a\033]6;1;bg;red;brightness;0\a\033]6;1;bg;green;brightness;150\a\033]6;1;bg;blue;brightness;0\a'",
+    "blue": "echo '\a\033]6;1;bg;red;brightness;0\a\033]6;1;bg;green;brightness;0\a\033]6;1;bg;blue;brightness;200\a'",
+    "yellow": "echo '\a\033]6;1;bg;red;brightness;200\a\033]6;1;bg;green;brightness;200\a\033]6;1;bg;blue;brightness;0\a'",
+    "purple": "echo '\a\033]6;1;bg;red;brightness;200\a\033]6;1;bg;green;brightness;0\a\033]6;1;bg;blue;brightness;200\a'",
+    "gray": "echo '\a\033]6;1;bg;red;brightness;103\a\033]6;1;bg;green;brightness;103\a\033]6;1;bg;blue;brightness;103\a'",
+    "black": "echo '\a\033]6;1;bg;red;brightness;0\a\033]6;1;bg;green;brightness;0\a\033]6;1;bg;blue;brightness;0\a'",
+    "default": "echo '\a\033]6;1;bg;*;default\a'",
+}
+
+# -- events
+
+@events.on_ptk_create
+def custom_keybindings(bindings, **kw):
+
+    @bindings.add(Keys.F12)
+    def restart_device(event):
+
+        def _run():
+            subprocess.run(
+                shlex.split("pymobiledevice3 diagnostics restart"),
+                check=False,
+            )
+            print("\nRestarting device", flush=True)
+
+        # Give the terminal to the subprocess (fixes Enter / stdin issues)
+        run_in_terminal(_run)
+        event.app.invalidate()
 
 
-# -- ALIAS
+@events.on_transform_command
+def expand_braces(cmd, **a):
+    if '[' in cmd or '$(' in cmd or '@(' in cmd:
+        return cmd
 
-def _get_file(args):
-    scp -i "~/.ssh/id_rsa" -r -P $DEVICE_SSH_PORT root@localhost:@(args[0]) @(args[1])
+    parts = shlex.split(cmd)
+    expanded_cmds = []
+    requires_expansion = False
 
+    for part in parts:
+        if "{" in part and "}" in part:
+            prefix, braces, postfix = part.partition("{")
+            options, _, postfix = postfix.partition("}")
+            expanded_parts = [
+                prefix + option + postfix for option in options.split(",")
+            ]
+            expanded_cmds.extend(expanded_parts)
+            requires_expansion = True
+        else:
+            expanded_cmds.append(part)
 
-def _put_file(args):
-    scp -i "~/.ssh/id_rsa" -r -P $DEVICE_SSH_PORT @(args[0]) root@localhost:@(args[1])
+    if requires_expansion:
+        return " ".join(expanded_cmds)
 
+    return cmd
 
-def _localdevice(args):
-    ssh -p $DEVICE_SSH_PORT root@localhost -i ~/.ssh/id_rsa
+# -- alias
 
 
 @unthreadable
-def _ggpush(args):
+def _ggpush(args) -> None:
     XSH.builtins.execx(f'git push origin {XSH.env["PROMPT_FIELDS"]["curr_branch"]()} {shlex.join(args)}')
 
 
-def _subl(args):
+def _subl(args) -> None:
     if 0 != os.system(f'open -b com.sublimetext.4 "{args[0]}"'):
         os.system(f'open -b com.sublimetext.3 "{args[0]}"')
 
 
-def _pycharm(args):
+def _pycharm(args) -> None:
     if 0 != os.system(f'open -b com.jetbrains.pycharm.ce "{args[0]}"'):
         os.system(f'open -b com.jetbrains.pycharm "{args[0]}"')
 
-def _clion(args):
+
+def _clion(args) -> None:
     if 0 != os.system(f'open -b com.jetbrains.clion "{args[0]}"'):
         os.system(f'open -b com.jetbrains.clion "{args[0]}"')
 
-def _webstorm(args):
+
+def _webstorm(args) -> None:
     if 0 != os.system(f'open -b com.jetbrains.webstorm "{args[0]}"'):
         os.system(f'open -b com.jetbrains.webstorm "{args[0]}"')
 
-def _rcpull(args):
+
+def _rcpull(args) -> None:
     parser = ArgumentParser(description='pull latest .xonshrc')
     args = parser.parse_args(args)
 
@@ -363,8 +415,22 @@ def _open_github(args):
     except Exception as e:
         print(f'Error: {e}')
 
-# -- env
-XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
+
+def _tab_color_completer(xsh, action, completer, alias, command):
+    return TAB_COLORS.keys()
+
+
+def _tab_color(color: Annotated[str, Arg(completer=_tab_color_completer)]) -> None:
+    "Change current tab color"
+    if color not in TAB_COLORS:
+        print(f"Not a valid color. Must be one of: {TAB_COLORS.keys()}")
+        return
+    XSH.builtins.execx(TAB_COLORS[color])
+
+
+def _iterm_1337(cmd: str) -> None:
+    "Execute iTerm 1337 commands"
+    XSH.builtins.execx(f"echo '\a\033]1337;{cmd}a")
 
 
 # -- xonsh
@@ -385,12 +451,6 @@ XSH.aliases['ws'] = _webstorm
 XSH.aliases['ida'] = 'open -b com.hexrays.ida'
 XSH.aliases['sqlitebrwoser'] = 'open -b net.sourceforge.sqlitebrowser'
 
-# -- checkra1n
-
-XSH.aliases['get_file'] = _get_file
-XSH.aliases['put_file'] = _put_file
-XSH.aliases['localdevice'] = _localdevice
-
 # -- git
 
 XSH.aliases['github'] = _open_github
@@ -403,6 +463,10 @@ XSH.aliases['gd'] = 'git diff'
 XSH.aliases['gst'] = 'git status'
 XSH.aliases['gcl'] = 'git clone --recurse-submodules'
 
+# -- iterm
+
+XSH.aliases['tab-color'] = ArgParserAlias(prog="tab-color", has_args=True, func=_tab_color)
+
 # -- shell
 
 XSH.aliases['t'] = 'tree'
@@ -411,7 +475,7 @@ XSH.aliases['la'] = 'ls -lAh'
 XSH.aliases['ll'] = 'ls -lh'
 XSH.aliases['ls'] = 'ls -FG'
 XSH.aliases['lsa'] = 'ls -lah'
-XSH.aliases['grt'] = lambda: os.chdir($(git rev-parse --show-toplevel).strip())
+XSH.aliases['grt'] = lambda: os.chdir($(git rev-parse - -show-toplevel).strip())
 XSH.aliases['grep'] = 'grep --line-buffered'
 XSH.aliases['vox'] = 'uvox'
 
@@ -423,57 +487,7 @@ XSH.aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plsho
 XSH.aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 XSH.aliases['disable_watchdog'] = _disable_watchdog
 
-@events.on_ptk_create
-def custom_keybindings(bindings, **kw):
 
-    @bindings.add(Keys.F12)
-    def restart_device(event):
-
-        def _run():
-            subprocess.run(
-                shlex.split("pymobiledevice3 diagnostics restart"),
-                check=False,
-            )
-            print("\nRestarting device", flush=True)
-
-        # Give the terminal to the subprocess (fixes Enter / stdin issues)
-        run_in_terminal(_run)
-        event.app.invalidate()
-
-@events.on_transform_command
-def expand_braces(cmd, **a):
-    if '[' in cmd or '$(' in cmd or '@(' in cmd:
-        return cmd
-
-    parts = shlex.split(cmd)
-    expanded_cmds = []
-    requires_expansion = False
-
-    for part in parts:
-        if "{" in part and "}" in part:
-            prefix, braces, postfix = part.partition("{")
-            options, _, postfix = postfix.partition("}")
-            expanded_parts = [
-                prefix + option + postfix for option in options.split(",")
-            ]
-            expanded_cmds.extend(expanded_parts)
-            requires_expansion = True
-        else:
-            expanded_cmds.append(part)
-
-    if requires_expansion:
-        return " ".join(expanded_cmds)
-
-    return cmd
-
-
-@unthreadable
-def _test(args):
-    import time
-    print('try to ctrl-c before the 10 seconds!')
-    time.sleep(10)
-
-XSH.aliases['test'] = _test
 
 
 if CUSTOM_RC.exists():
