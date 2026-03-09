@@ -479,6 +479,11 @@ XSH.aliases['grt'] = lambda: os.chdir($(git rev-parse - -show-toplevel).strip())
 XSH.aliases['grep'] = 'grep --line-buffered'
 XSH.aliases['vox'] = 'uvox'
 
+# -- npm
+
+XSH.aliases['pn'] = 'pnpm'
+XSH.aliases['np'] = 'npm'
+
 # -- tools
 
 XSH.aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootca)
