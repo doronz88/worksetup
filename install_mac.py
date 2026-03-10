@@ -13,7 +13,9 @@ import os
 from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional
+import plistlib
 
+import time
 import click
 import coloredlogs
 import inquirer3
@@ -297,6 +299,61 @@ def install_xonsh():
 
     confirm_install('Set ready-made .xonshrc file', set_xonshrc)
 
+def enable_osascript_notifs() -> None:
+    ncprefs_path = Path('~/Library/Preferences/com.apple.ncprefs.plist').expanduser()
+
+    ncprefs = plistlib.loads(ncprefs_path.read_bytes())
+
+    ncprefs['apps'] = [entry for entry in ncprefs['apps'] if entry['bundle-id'] != 'com.apple.ScriptEditor2']
+    ncprefs['apps'].append(
+        {
+            'grouping': 0,
+            'src': [
+                {
+                    'path': '/System/Applications/Utilities/Script Editor.app',
+                    'req': b'\xfa\xde\x0c\x00\x00\x00\x004\x00\x00\x00\x01\x00\x00\x00\x06\x00\x00\x00\x02\x00\x00\x00\x17com.apple.ScriptEditor2\x00\x00\x00\x00\x03',
+                    'flags': 2,
+                    'uuid': '0D684517-9C0D-45C1-9C0B-A2678330D414',
+                },
+                {
+                    'flags': 6,
+                    'req': b'\xfa\xde\x0c\x00\x00\x00\x000\x00\x00\x00\x01\x00\x00\x00\x06\x00\x00\x00\x02\x00\x00\x00\x13com.apple.osascript\x00\x00\x00\x00\x03',
+                    'uuid': '8054440A-4D95-4DED-BD26-75F8085C8EF3',
+                },
+            ],
+            'bundle-id': 'com.apple.ScriptEditor2',
+            'content_visibility': 0,
+            'auth': 7,
+            'flags': 41951246,
+            'path': '/System/Applications/Utilities/Script Editor.app',
+        }
+    )
+
+    ncprefs_path.write_bytes(plistlib.dumps(ncprefs, fmt=plistlib.FMT_BINARY))
+
+    # Necessary for usernoted to see changes
+    time.sleep(0.25)
+
+    killall('sighup', 'usernoted')
+
+
+def install_cop() -> None:
+    logger.info('installing cop')
+
+    enable_osascript_notifs()
+
+    with local.env(UV_GIT_LFS=1):
+        uv(
+            'tool',
+            'install',
+            '--reinstall',
+            'git+ssh://git@github.com/shaharw-arch/cop.git',
+            '--python',
+            '3.13',
+        )
+
+    local['cop']('--install-launch-agent')
+
 
 def overwrite_vscode_settings_file() -> None:
     VSCODE_SETTINGS_FILE.write_text(VSCODE_DEFAULT_SETTINGS)
@@ -314,7 +371,7 @@ def set_automation(ctx, param, value):
     if value:
         global AUTOMATION_MODE
         AUTOMATION_MODE = True
-
+        
 
 class BaseCommand(TyperCommand):
     def __init__(self, *args, **kwargs):
@@ -362,6 +419,11 @@ def cli_xonsh():
 def cli_configure_vscode():
     """ Configure vscode """
     configure_vscode()
+    
+@cli.command('cop')
+def cop() -> None:
+    """Instal cop"""
+    install_cop()
 
 
 @cli.command('everything', cls=BaseCommand)
@@ -373,6 +435,7 @@ def cli_everything(disable: Optional[list[str]] = None) -> None:
     install_python_packages()
     install_ohmyzsh()
     install_xonsh()
+    install_cop()
 
 
 if __name__ == '__main__':
