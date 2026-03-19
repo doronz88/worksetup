@@ -492,7 +492,8 @@ XSH.aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plsho
 XSH.aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
 XSH.aliases['disable_watchdog'] = _disable_watchdog
 
-
+# -- pymobiledevice3
+XSH.aliases['pmd'] = 'pymobiledevice3'
 
 
 if CUSTOM_RC.exists():
