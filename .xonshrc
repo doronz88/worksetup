@@ -497,4 +497,4 @@ XSH.aliases['pmd'] = 'pymobiledevice3'
 
 
 if CUSTOM_RC.exists():
-    XSH.builtins.execx(f'source {CUSTOM_RC}')
+    XSH.builtins.execx(f'source -e {CUSTOM_RC}')
