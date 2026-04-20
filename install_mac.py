@@ -84,6 +84,8 @@ brew = local['brew']
 sudo = local['sudo']
 defaults = local['defaults']
 killall = local['killall']
+launchctl = local['launchctl']
+swift = local['swift']
 git = local['git']
 cp = local['cp']
 chsh = local['chsh']
@@ -122,6 +124,82 @@ def git_clone(repo_url: str, branch='master'):
         os.chdir(cwd)
 
 
+def set_input_sources():
+    with local.env(CLANG_MODULE_CACHE_PATH='/tmp/clang-module-cache',
+                   SWIFT_MODULE_CACHE_PATH='/tmp/swift-module-cache'):
+        swift('-e', r'''
+import Carbon
+
+let keepIDs = Set(["com.apple.keylayout.ABC", "com.apple.keylayout.Hebrew-PC"])
+
+func propString(_ src: TISInputSource, _ key: CFString) -> String? {
+    guard let raw = TISGetInputSourceProperty(src, key) else { return nil }
+    return unsafeBitCast(raw, to: CFString.self) as String
+}
+
+func propBool(_ src: TISInputSource, _ key: CFString) -> Bool {
+    guard let raw = TISGetInputSourceProperty(src, key) else { return false }
+    return CFBooleanGetValue(unsafeBitCast(raw, to: CFBoolean.self))
+}
+
+let allSources = TISCreateInputSourceList(nil, true).takeRetainedValue() as! [TISInputSource]
+var selectedABC: TISInputSource?
+var foundIDs = Set<String>()
+
+for source in allSources {
+    guard propString(source, kTISPropertyInputSourceCategory) == kTISCategoryKeyboardInputSource as String else {
+        continue
+    }
+    guard propBool(source, kTISPropertyInputSourceIsSelectCapable) else {
+        continue
+    }
+
+    let sourceID = propString(source, kTISPropertyInputSourceID) ?? ""
+    if keepIDs.contains(sourceID) {
+        foundIDs.insert(sourceID)
+        let status = TISEnableInputSource(source)
+        guard status == noErr else {
+            fputs("failed to enable \(sourceID): \(status)\n", stderr)
+            exit(1)
+        }
+        if sourceID == "com.apple.keylayout.ABC" {
+            selectedABC = source
+        }
+    } else if propBool(source, kTISPropertyInputSourceIsEnabled) {
+        let status = TISDisableInputSource(source)
+        guard status == noErr else {
+            fputs("failed to disable \(sourceID): \(status)\n", stderr)
+            exit(1)
+        }
+    }
+}
+
+guard foundIDs == keepIDs else {
+    fputs("missing input sources: \(keepIDs.subtracting(foundIDs).sorted())\n", stderr)
+    exit(1)
+}
+
+guard let abc = selectedABC else {
+    fputs("ABC input source not found\n", stderr)
+    exit(1)
+}
+
+let selectStatus = TISSelectInputSource(abc)
+guard selectStatus == noErr else {
+    fputs("failed to select ABC: \(selectStatus)\n", stderr)
+    exit(1)
+}
+''')
+    try:
+        user_service_prefix = f'gui/{os.getuid()}/'
+        for service in ('com.apple.TextInputMenuAgent',
+                        'com.apple.TextInputSwitcher',
+                        'com.apple.SystemUIServer.agent'):
+            launchctl('kickstart', '-k', user_service_prefix + service)
+    except ProcessExecutionError as e:
+        logger.warning(f'failed to restart text input services: {e}')
+
+
 def configure_preferences():
     logger.info('configuring preferences')
 
@@ -149,6 +227,10 @@ def configure_preferences():
                     defaults['write', 'com.apple.AMPDevicesAgent', 'dontAutomaticallySyncIPods', '-bool', 'true'])
 
     # -- Keyboard (applied only after logout and login)
+    confirm_install(
+        'set exactly two keyboard input sources: English and Hebrew - PC',
+        set_input_sources)
+
     confirm_install('change delay until key repeat',
                     partial(insert_number_install, 'How much delay? mac normal is between 15 (225ms) to 120 (1.8s)',
                             defaults['write', '-g', 'InitialKeyRepeat', '-int'], 12))
