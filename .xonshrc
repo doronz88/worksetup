@@ -490,6 +490,7 @@ XSH.aliases['rootca'] = ArgParserAlias(prog='rootca', has_args=True, func=_rootc
 XSH.aliases['cert'] = ArgParserAlias(prog='cert', has_args=True, func=_cert)
 XSH.aliases['plshow'] = ArgParserAlias(prog='plshow', has_args=True, func=_plshow)
 XSH.aliases['tarsplit'] = ArgParserAlias(prog='tarsplit', has_args=True, func=_tarsplit)
+XSH.aliases['entitlements'] = 'ipsw macho info -e'
 XSH.aliases['disable_watchdog'] = _disable_watchdog
 
 # -- pymobiledevice3
