@@ -110,7 +110,7 @@ XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 # XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
 
 # Finally, load all modules
-XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi')
+XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi fish_completer')
 
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
