@@ -12,6 +12,7 @@
 
 import logging
 import os
+import shutil
 from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional
@@ -343,26 +344,40 @@ def install_ohmyzsh() -> None:
 def install_xonsh():
     logger.info('installing xonsh')
 
-    uv('tool', 'install', 'xonsh[full]',
-       '--force',
+    install_args = (
+        'tool', 'install', 'xonsh[full]',
+        '--force',
 
-       # xpip
-       '--with', 'pip',
+        # xpip
+        '--with', 'pip',
 
-       # xontribs
-       '--with', 'xontrib-argcomplete',
-       '--with', 'xontrib-fzf-widgets',
-       '--with', 'xontrib-zoxide',
-       '--with', 'xontrib-uvox',
-       '--with', 'xontrib-jedi',
-       '--with', 'xontrib-fish-completer',
+        # xontribs
+        '--with', 'xontrib-argcomplete',
+        '--with', 'xontrib-fzf-widgets',
+        '--with', 'xontrib-zoxide',
+        '--with', 'xontrib-uvox',
+        '--with', 'xontrib-jedi',
+        '--with', 'xontrib-fish-completer',
 
-       # globalrc
-       '--with', 'pygments',
-       '--with', 'plumbum',
+        # globalrc
+        '--with', 'pygments',
+        '--with', 'plumbum',
 
-       '--python', '3.13'
-       )
+        '--python', '3.13'
+    )
+
+    try:
+        uv(*install_args)
+    except ProcessExecutionError as e:
+        xonsh_tool_dir = Path('~/.local/share/uv/tools/xonsh').expanduser()
+        if ('Invalid environment' not in e.stderr
+                or 'missing Python executable' not in e.stderr
+                or str(xonsh_tool_dir) not in e.stderr):
+            raise
+
+        logger.warning(f'removing invalid uv xonsh tool environment at {xonsh_tool_dir}')
+        shutil.rmtree(xonsh_tool_dir)
+        uv(*install_args)
 
     with local.env(PATH=f'{Path("~/.local/bin").expanduser()}:{os.environ["PATH"]}'):
         xonsh_path = str(local['xonsh'])
