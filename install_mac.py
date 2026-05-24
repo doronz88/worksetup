@@ -1,4 +1,6 @@
+#!/usr/bin/env -S uv run --script
 # /// script
+# requires-python = ">=3.11"
 # dependencies = [
 #   "requests",
 #   "plumbum",
@@ -252,7 +254,7 @@ def install_brew_packages(disable: Optional[list[str]] = None) -> None:
     brew_list = brew('list').split('\n')
 
     packages = ['git', 'git-lfs', 'cmake', 'openssl@3', 'libffi', 'defaultbrowser', 'bat', 'fzf', 'wget', 'htop',
-                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'node', 'drawio', 'jq', 'difftastic']
+                'ncdu', 'watch', 'bash-completion@2', 'ripgrep', 'node', 'drawio', 'jq', 'difftastic', 'fish']
 
     for p in disable:
         if p in packages:
@@ -351,6 +353,7 @@ def install_xonsh():
        '--with', 'xontrib-zoxide',
        '--with', 'xontrib-uvox',
        '--with', 'xontrib-jedi',
+       '--with', 'xontrib-fish-completer',
 
        # globalrc
        '--with', 'pygments',

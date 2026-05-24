@@ -81,5 +81,5 @@ cd worksetup
 
 ```shell
 # pass -a/--automated for doing everything without prompting (unless certain removals are required)
-uv run install_mac.py everything
+./install_mac.py everything
 ```
