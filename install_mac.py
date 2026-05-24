@@ -344,6 +344,8 @@ def install_xonsh():
     logger.info('installing xonsh')
 
     uv('tool', 'install', 'xonsh[full]',
+       '--force',
+
        # xpip
        '--with', 'pip',
 
