@@ -481,6 +481,9 @@ XSH.aliases['vox'] = 'uvox'
 
 # -- npm
 
+$PNPM_HOME = os.path.expanduser("~/.local/share/pnpm")
+$PATH.insert(0, $PNPM_HOME)
+
 XSH.aliases['pn'] = 'pnpm'
 XSH.aliases['np'] = 'npm'
 
