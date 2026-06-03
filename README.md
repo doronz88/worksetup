@@ -41,7 +41,7 @@ Setup script for quickly setting up macOS installations for a more efficient wor
 
 </details>
 
-# Perquisites
+# Prerequisites
 
 Install Homebrew:
 
@@ -80,6 +80,11 @@ cd worksetup
 # Usage
 
 ```shell
-# pass -a/--automated for doing everything without prompting (unless certain removals are required)
 ./install_mac.py everything
+```
+
+Or automated:
+```shell
+# pass -a/--automated for doing everything without prompting (unless certain removals are required)
+./install_mac.py everything --automated
 ```
