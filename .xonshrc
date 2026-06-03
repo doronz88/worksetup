@@ -479,6 +479,11 @@ XSH.aliases['grt'] = lambda: os.chdir($(git rev-parse - -show-toplevel).strip())
 XSH.aliases['grep'] = 'grep --line-buffered'
 XSH.aliases['vox'] = 'uvox'
 
+# -- nvm
+
+if Path("~/.nvm").expanduser().exists():
+    XSH.builtins.execx('source-bash ~/.nvm/nvm.sh')
+
 # -- npm
 
 $PNPM_HOME = os.path.expanduser("~/.local/share/pnpm")
