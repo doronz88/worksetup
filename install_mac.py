@@ -326,7 +326,7 @@ def install_python_packages() -> None:
     python_packages = ['xattr', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
     for package in python_packages:
-        confirm_install(f'Install {package}', uv['tool', 'install', package])
+        confirm_install(f'Install {package}', uv['tool', 'install', package, '--force'])
 
 
 def install_ohmyzsh() -> None:
