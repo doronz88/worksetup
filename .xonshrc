@@ -47,6 +47,7 @@ XSH.env['PROMPT'] = '{env_name}{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{br
 XSH.env['PATH'] = [
     '~/.cargo/bin',
     '~/.local/bin',
+    '~/.local/share/pnpm/bin',
     '/usr/local/opt/gnu-tar/libexec/gnubin',
     '/usr/local/opt/make/libexec/gnubin',
     '/usr/local/opt/openjdk/bin',
