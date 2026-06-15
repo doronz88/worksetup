@@ -7,6 +7,7 @@
 #   "typer",
 #   "coloredlogs",
 #   "inquirer3",
+#   "click<8.2.0",
 # ]
 # ///
 
