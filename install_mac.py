@@ -16,16 +16,14 @@ import os
 import shutil
 from functools import partial
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Annotated, Callable, Optional
 
-import click
 import coloredlogs
 import inquirer3
 import requests
 import typer
 from plumbum import ProcessExecutionError, local
 from plumbum.commands.base import BoundCommand
-from typer.core import TyperCommand
 
 coloredlogs.install(level=logging.DEBUG)
 
@@ -99,6 +97,7 @@ uv = local['uv']
 logger = logging.getLogger(__name__)
 
 AUTOMATION_MODE = False
+AUTOMATION_HELP = 'do everything without prompting (unless certain removals are required)'
 
 
 def confirm_install(component: str, installer: Callable):
@@ -328,7 +327,7 @@ def install_python_packages() -> None:
     python_packages = ['xattr', 'pymobiledevice3', 'harlogger', 'cfprefsmon', 'pychangelog2']
 
     for package in python_packages:
-        confirm_install(f'Install {package}', uv['tool', 'install', package])
+        confirm_install(f'Install {package}', uv['tool', 'install', package, '--force'])
 
 
 def install_ohmyzsh() -> None:
@@ -413,62 +412,64 @@ def configure_vscode() -> None:
     confirm_install('overwrite vscode settings file', overwrite_vscode_settings_file)
 
 
-def set_automation(ctx, param, value):
-    if value:
-        global AUTOMATION_MODE
-        AUTOMATION_MODE = True
+def set_automation(value: bool) -> bool:
+    global AUTOMATION_MODE
+    AUTOMATION_MODE = value
+    return value
 
 
-class BaseCommand(TyperCommand):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.params[:0] = [
-            click.Option(('-a', '--automated'), is_flag=True, callback=set_automation, expose_value=False,
-                         help='do everything without prompting (unless certain removals are required)')]
+AutomatedOption = Annotated[
+    bool,
+    typer.Option('-a', '--automated', callback=set_automation, help=AUTOMATION_HELP),
+]
+DisableOption = Annotated[Optional[list[str]], typer.Option('-d', '--disable')]
 
 
 cli = typer.Typer(help='Automate selected installs')
 
 
-@cli.command('configure-preferences', cls=BaseCommand)
-def cli_configure_preferences():
+@cli.command('configure-preferences')
+def cli_configure_preferences(_automated: AutomatedOption = False):
     """ Configure several preferences """
     configure_preferences()
 
 
-@cli.command('brew-packages', cls=BaseCommand)
-@click.option('-d', '--disable', multiple=True)
-def cli_brew_packages(disable: Optional[list[str]] = None) -> None:
+@cli.command('brew-packages')
+def cli_brew_packages(
+        _automated: AutomatedOption = False,
+        disable: DisableOption = None) -> None:
     """ Install selected brew packages """
     install_brew_packages(disable)
 
 
-@cli.command('python-packages', cls=BaseCommand)
-def cli_python_packages():
+@cli.command('python-packages')
+def cli_python_packages(_automated: AutomatedOption = False):
     """ Install selected python packages """
     install_python_packages()
 
 
-@cli.command('ohmyzsh', cls=BaseCommand)
-def cli_ohmyzsh():
+@cli.command('ohmyzsh')
+def cli_ohmyzsh(_automated: AutomatedOption = False):
     """ Install ohmyzsh """
     install_ohmyzsh()
 
 
-@cli.command('xonsh', cls=BaseCommand)
-def cli_xonsh():
+@cli.command('xonsh')
+def cli_xonsh(_automated: AutomatedOption = False):
     """ Install xonsh """
     install_xonsh()
 
 
-@cli.command('configure-vscode', cls=BaseCommand)
-def cli_configure_vscode():
+@cli.command('configure-vscode')
+def cli_configure_vscode(_automated: AutomatedOption = False):
     """ Configure vscode """
     configure_vscode()
 
 
-@cli.command('everything', cls=BaseCommand)
-def cli_everything(disable: Optional[list[str]] = None) -> None:
+@cli.command('everything')
+def cli_everything(
+        _automated: AutomatedOption = False,
+        disable: DisableOption = None) -> None:
     """ Install everything """
     configure_preferences()
     install_brew_packages(disable)
