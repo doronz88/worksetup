@@ -408,7 +408,7 @@ def _open_github(args):
             print(f"Unsupported remote URL: {remote_url}")
             return
 
-        url = url.rstrip('.git')
+        url = url.removesuffix('.git')
         url += f'/tree/{branch}'
         webbrowser.open(url)
     except subprocess.CalledProcessError:
