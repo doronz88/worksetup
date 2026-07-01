@@ -38,6 +38,28 @@ VSCODE_EXTENSION_IDS = [
     'ms-vscode.vscode-typescript-next']
 VSCODE_SETTINGS_FILE = Path('~/Library/Application Support/Code/User/settings.json').expanduser()
 
+JETBRAINS_PLUGIN_IDS = [
+    'com.mallowigi',  # Atom Material Icons
+    'com.chrisrm.idea.MaterialThemeUI',  # Material Theme UI
+    # https://plugins.jetbrains.com/plugin/20710-rainbow-brackets-lite--free-and-opensource
+    'izhangzhihao.rainbow.brackets.lite',  # Rainbow Brackets Lite
+    # https://plugins.jetbrains.com/plugin/24145-pyright
+    'com.insyncwithfoo.pyright',  # Pyright
+    # https://plugins.jetbrains.com/plugin/8215-youtrack-integration
+    'com.github.jk1.ytplugin',  # YouTrack Integration
+    # https://plugins.jetbrains.com/plugin/13122-shell-script
+    'com.jetbrains.sh',  # Shell Script
+    # https://plugins.jetbrains.com/plugin/7724-docker
+    'Docker',  # Docker
+    # https://plugins.jetbrains.com/plugin/15635-diagrams-net-integration
+    'de.docs_as_co.intellij.plugin.diagramsnet',  # Diagrams.net Integration
+]
+
+JETBRAINS_IDES = {
+    'WebStorm.app': 'webstorm',
+    'PyCharm.app': 'pycharm',
+}
+
 VSCODE_DEFAULT_SETTINGS = """
 {
     "editor.cursorBlinking": "smooth",
@@ -281,14 +303,10 @@ def install_brew_packages(disable: Optional[list[str]] = None) -> None:
         'DB Browser for SQLite.app': 'db-browser-for-sqlite',
         'Google Chrome.app': 'google-chrome',
         'Wireshark.app': 'wireshark',
-        'PyCharm CE.app': 'pycharm-ce',
         'Visual Studio Code.app': 'visual-studio-code',
         'Rectangle.app': 'rectangle',
         'Discord.app': 'discord',
-        'Flycut.app': 'flycut',
-        'Raycast.app': 'raycast',
         'AltTab.app': 'alt-tab',
-        'SensibleSideButtons.app': 'sensiblesidebuttons',
     }
 
     for app, cask in casks.items():
@@ -413,6 +431,25 @@ def configure_vscode() -> None:
     confirm_install('overwrite vscode settings file', overwrite_vscode_settings_file)
 
 
+def install_jetbrains_plugins() -> None:
+    logger.info('installing jetbrains plugins')
+    for app, binary in JETBRAINS_IDES.items():
+        launcher = Path('/Applications') / app / 'Contents' / 'MacOS' / binary
+        if not launcher.exists():
+            logger.warning(f'{app} is not installed, skipping')
+            continue
+
+        # only one instance may run at a time; close it before installing plugins
+        try:
+            killall(binary)
+        except ProcessExecutionError as e:
+            if 'No matching processes' not in e.stderr:
+                raise
+
+        confirm_install(f'install jetbrains plugins for {app}',
+                        local[str(launcher)]['installPlugins', *JETBRAINS_PLUGIN_IDS])
+
+
 def set_automation(ctx, param, value):
     if value:
         global AUTOMATION_MODE
@@ -467,6 +504,12 @@ def cli_configure_vscode():
     configure_vscode()
 
 
+@cli.command('jetbrains-plugins', cls=BaseCommand)
+def cli_jetbrains_plugins():
+    """ Install jetbrains plugins for webstorm and pycharm """
+    install_jetbrains_plugins()
+
+
 @cli.command('everything', cls=BaseCommand)
 def cli_everything(disable: Optional[list[str]] = None) -> None:
     """ Install everything """
@@ -476,6 +519,7 @@ def cli_everything(disable: Optional[list[str]] = None) -> None:
     install_python_packages()
     install_ohmyzsh()
     install_xonsh()
+    install_jetbrains_plugins()
 
 
 if __name__ == '__main__':
