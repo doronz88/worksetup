@@ -44,7 +44,6 @@ CUSTOM_RC = Path('~/.myrc').expanduser()
 XSH.env['WORKSETUP_ROOT'] = '~/dev'
 XSH.env['THEOS'] = str(Path('~/theos').expanduser())
 # XSH.env['DEVICE_SSH_PORT'] = 4444
-XSH.env['PROMPT'] = '{env_name}{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch: {}}{RESET} {BOLD_BLUE}{prompt_end}{RESET} '
 XSH.env['PATH'] = [
     '~/.cargo/bin',
     '~/.local/bin',
@@ -112,7 +111,7 @@ XSH.env['PIP_BREAK_SYSTEM_PACKAGES'] = 1
 # XSH.env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
 
 # Finally, load all modules
-XSH.builtins.execx('xontrib load argcomplete coreutils fzf-widgets jedi fish_completer')
+XSH.builtins.execx('xontrib load argcomplete coreutils fzf-completions jedi fish_completer')
 
 if shutil.which('zoxide'):
     XSH.builtins.execx('xontrib load zoxide')
