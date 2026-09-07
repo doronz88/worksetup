@@ -372,7 +372,7 @@ def install_xonsh():
 
         # xontribs
         '--with', 'xontrib-argcomplete',
-        '--with', 'xontrib-fzf-widgets',
+        '--with', 'xontrib-fzf-completions',
         '--with', 'xontrib-zoxide',
         '--with', 'xontrib-uvox',
         '--with', 'xontrib-jedi',
