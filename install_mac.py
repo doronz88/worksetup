@@ -377,6 +377,7 @@ def install_xonsh():
         '--with', 'xontrib-uvox',
         '--with', 'xontrib-jedi',
         '--with', 'xontrib-fish-completer',
+        '--with', 'xontrib-term-integrations',
 
         # globalrc
         '--with', 'pygments',
