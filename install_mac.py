@@ -334,6 +334,21 @@ def install_brew_packages(disable: Optional[list[str]] = None) -> None:
 
     confirm_install('install ipsw', brew['install', 'blacktop/tap/ipsw'])
 
+    if 'pliable' in disable:
+        logger.info('skipping pliable')
+    elif 'pliable' not in brew_list:
+        def install_pliable() -> None:
+            brew('tap', 'doronz88/tap')
+            try:
+                # recent Homebrew refuses to load third-party casks until they are trusted
+                brew('trust', '--cask', 'doronz88/tap/pliable')
+            except ProcessExecutionError as e:
+                if 'Unknown command' not in e.stderr:
+                    raise
+            brew('install', '--cask', 'doronz88/tap/pliable')
+
+        confirm_install('install Pliable (plist editor)', install_pliable)
+
     if 'google-chrome' not in brew_list and 'defaultbrowser' in brew_list:
         brew_list = brew('list').split('\n')
         if 'google-chrome' in brew_list:
